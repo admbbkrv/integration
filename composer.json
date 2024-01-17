@@ -62,7 +62,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/App/"
+            "App\\": "src/App/",
+            "AmoApiClient\\": "src/AmoApiClient/src/"
         }
     },
     "autoload-dev": {
