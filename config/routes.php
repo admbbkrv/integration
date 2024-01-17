@@ -41,4 +41,5 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/', App\Handler\HomePageHandler::class, 'home');
     $app->get('/api/ping', App\Handler\PingHandler::class, 'api.ping');
     $app->get('/api/sum', App\Handler\SumHandler::class, 'api.sum');
+    $app->get('/api/amo/get_token', \AmoApiClient\Handler\GetApiTokenHandler::class, 'api.amo.get_token');
 };
