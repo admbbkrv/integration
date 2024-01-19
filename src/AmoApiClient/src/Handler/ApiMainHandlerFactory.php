@@ -14,11 +14,12 @@ class ApiMainHandlerFactory
 {
     public function __invoke(ContainerInterface $container) : ApiMainHandler
     {
+        $apiClient = $container->get('AmoClientWithToken');
         $getTokenService = $container->get(GetTokenInterface::class);
         $accessToken = $getTokenService->get(AmoApiConstants::TOKEN_FILE);
 
         return new ApiMainHandler(
-            $container->get('AmoClientWithToken'),
+            $apiClient,
             $accessToken
         );
     }
