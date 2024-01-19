@@ -37,7 +37,6 @@ class ConfigProvider
             'invokables' => [
             ],
             'factories'  => [
-                GetApiTokenHandler::class => GetApiTokenHandlerFactory::class,
             ],
         ];
     }

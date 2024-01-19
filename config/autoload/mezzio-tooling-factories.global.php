@@ -13,7 +13,6 @@ declare(strict_types=1);
 return [
     'dependencies' => [
         'factories' => [
-            AmoApiClient\Handler\GetApiTokenHandler::class => AmoApiClient\Handler\GetApiTokenHandlerFactory::class,
         ],
     ],
 ];
