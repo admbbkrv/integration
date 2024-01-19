@@ -9,6 +9,14 @@ use AmoApiClient\Factory\AmoApiClientWithTokenFactory;
 use AmoApiClient\Factory\AmoCRMApiClientFactory;
 use AmoApiClient\Handler\ApiMainHandler;
 use AmoApiClient\Handler\ApiMainHandlerFactory;
+use AmoApiClient\Middleware\ApiAmoAuthMiddleware;
+use AmoApiClient\Middleware\ApiAmoAuthMiddlewareFactory;
+use AmoApiClient\Services\AccessTokenService\AccessTokenService;
+use AmoApiClient\Services\AccessTokenService\AccessTokenServiceFactory;
+use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
+use AmoApiClient\Services\AccessTokenService\GetTokenService;
+use AmoApiClient\Services\AccessTokenService\SaveTokenInterface;
+use AmoApiClient\Services\AccessTokenService\SaveTokenService;
 use AmoCRM\Client\AmoCRMApiClient;
 
 /**
@@ -39,11 +47,15 @@ class ConfigProvider
     {
         return [
             'invokables' => [
+                SaveTokenInterface::class => SaveTokenService::class,
+                GetTokenInterface::class => GetTokenService::class,
             ],
             'factories'  => [
                 AmoCRMApiClient::class => AmoCRMApiClientFactory::class,
                 'AmoClientWithToken' => AmoApiClientWithTokenFactory::class,
                 ApiMainHandler::class => ApiMainHandlerFactory::class,
+                AccessTokenService::class => AccessTokenServiceFactory::class,
+                ApiAmoAuthMiddleware::class => ApiAmoAuthMiddlewareFactory::class,
             ],
         ];
     }

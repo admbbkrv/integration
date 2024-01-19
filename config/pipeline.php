@@ -66,6 +66,16 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // - route-based authentication
     // - route-based validation
     // - etc.
+    /**
+     * Принимает запрос от AmoCRN с параметрами для авторизации токена доступа
+     */
+    $app->pipe('/amo_redirect_uri', \AmoApiClient\Middleware\SaveTokenMiddleware::class);
+    /**
+     * Проверяет, есть ли в приложении активный токен доступа:
+     * if true -> скрипт продолдается
+     * if false -> перенравляет клинета на страницу авторизации,
+     */
+    $app->pipe(\AmoApiClient\Middleware\ApiAmoAuthMiddleware::class);
 
     // Register the dispatch middleware in the middleware pipeline
     $app->pipe(DispatchMiddleware::class);
