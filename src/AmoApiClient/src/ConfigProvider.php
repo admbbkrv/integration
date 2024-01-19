@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace AmoApiClient;
 
 
+use AmoApiClient\Factory\AmoApiClientWithTokenFactory;
+use AmoApiClient\Factory\AmoCRMApiClientFactory;
 use AmoApiClient\Handler\ApiMainHandler;
 use AmoApiClient\Handler\ApiMainHandlerFactory;
+use AmoCRM\Client\AmoCRMApiClient;
 
 /**
  * The configuration provider for the AmoApiClient module
@@ -38,6 +41,8 @@ class ConfigProvider
             'invokables' => [
             ],
             'factories'  => [
+                AmoCRMApiClient::class => AmoCRMApiClientFactory::class,
+                'AmoClientWithToken' => AmoApiClientWithTokenFactory::class,
                 ApiMainHandler::class => ApiMainHandlerFactory::class,
             ],
         ];
