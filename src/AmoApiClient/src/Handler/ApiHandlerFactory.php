@@ -4,31 +4,34 @@ namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoCRM\Client\AmoCRMApiClient;
+use AmoCRM\Client\AmoCRMApiClientFactory;
+use AmoCRM\OAuth\OAuthConfigInterface;
+use AmoCRM\OAuth\OAuthServiceInterface;
+use Mezzio\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Dotenv\Dotenv;
 
 abstract class ApiHandlerFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): ApiHandler
     {
-        //Зграузка переменных окружения
-        $dotenv = new Dotenv();
-        $dotenv->load(__DIR__ . '/../../../../.env');
+        $apiClientFactory = new AmoCRMApiClientFactory(
+            $container->get(OAuthConfigInterface::class),
+            $container->get(OAuthServiceInterface::class)
+        );
 
-        $clientId = $_ENV['CLIENT_ID'];
-        $clientSecret = $_ENV['CLIENT_SECRET'];
-        $redirectUri = $_ENV['CLIENT_REDIRECT_URI'];
-
-        $apiClient = new AmoCRMApiClient($clientId, $clientSecret, $redirectUri);
+        $apiClient = $apiClientFactory->make();
 
         return $this->getApiHandler(
             $apiClient,
-            $container->get(GetTokenInterface::class)
+            $container->get(GetTokenInterface::class),
+            $container->get(RouterInterface::class)
         );
     }
 
     abstract public function getApiHandler(
         AmoCRMApiClient $apiClient,
-        GetTokenInterface $getTokenInterface
+        GetTokenInterface $getTokenInterface,
+        RouterInterface $router
     ): ApiHandler;
 }
