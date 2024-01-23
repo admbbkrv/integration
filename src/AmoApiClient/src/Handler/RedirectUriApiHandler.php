@@ -7,7 +7,6 @@ namespace AmoApiClient\Handler;
 use AmoApiClient\Services\AccessTokenService\SaveTokenInterface;
 use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
-use http\Exception\RuntimeException;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
