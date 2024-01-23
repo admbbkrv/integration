@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Middleware;
 
-use AmoApiClient\Constants\AmoApiConstants;
-use AmoApiClient\Services\AccessTokenService\AccessTokenService;
-use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
-use AmoCRM\Client\AmoCRMApiClient;
 use Laminas\Diactoros\Response\RedirectResponse;
+use League\OAuth2\Client\Token\AccessTokenInterface;
+use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,34 +14,22 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ApiAmoAuthMiddleware implements MiddlewareInterface
 {
-
-    private AmoCRMApiClient $apiClient;
-    private GetTokenInterface $getToken;
+    private ?AccessTokenInterface $accessToken;
+    private RouterInterface $router;
 
     public function __construct(
-        AmoCRMApiClient $apiClient,
-        GetTokenInterface $getToken
+        ?AccessTokenInterface $accessToken,
+        RouterInterface $router
     ) {
-        $this->apiClient = $apiClient;
-        $this->getToken = $getToken;
+        $this->accessToken = $accessToken;
+        $this->router = $router;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
-        $accessToken = $this->getToken->get(AmoApiConstants::TOKEN_FILE);
+        if ($this->accessToken === null) {
 
-        if ($accessToken === null) {
-            if (!session_status()) {
-                session_start();
-            }
-
-            $state = bin2hex(random_bytes(16));
-            $_SESSION['oauth2state'] = $state;
-
-            $authorizationUrl = $this->apiClient->getOAuthClient()->getAuthorizeUrl([
-                'state' => $state,
-                'mode' => 'post_message',
-            ]);
+            $authorizationUrl = $this->router->generateUri('amo_auth');
 
             return new RedirectResponse($authorizationUrl);
         }
