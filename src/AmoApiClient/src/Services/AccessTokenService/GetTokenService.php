@@ -18,7 +18,6 @@ class GetTokenService implements GetTokenInterface
     public function get(string $tokenFile): ?AccessToken
     {
         if (!file_exists($tokenFile)) {
-//            throw new RuntimeException('Access token file not found');
             return null;
         }
 
@@ -42,7 +41,6 @@ class GetTokenService implements GetTokenInterface
             ]);
         }
 
-//        throw new ValidationException('Invalid access token ' . var_export($accessToken, true));
         return null;
     }
 }
