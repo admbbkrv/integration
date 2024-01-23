@@ -14,7 +14,7 @@ use Random\RandomException;
 /**
  * Класс обработчка, который отвественен за страницу авторизации API AmoCRN /auth
  */
-class AuthAmoHandler implements RequestHandlerInterface
+class AuthApiHandler implements RequestHandlerInterface
 {
     /**
      * Объект API клиента
@@ -27,11 +27,6 @@ class AuthAmoHandler implements RequestHandlerInterface
         $this->apiClient = $apiClient;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws RandomException
-     */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         if (!session_status()) {

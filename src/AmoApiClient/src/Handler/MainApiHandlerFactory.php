@@ -5,27 +5,27 @@ declare(strict_types=1);
 namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
-use AmoCRM\Client\AmoCRMApiClient;
 use Mezzio\Router\RouterInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Фабрика для генерации MainApiHandler обработчика
+ * Фабрика генерации MainApiHandler обработчика
  */
-class MainApiHandlerFactory extends ApiHandlerFactory
+class MainApiHandlerFactory extends AbstractApiHandlerFactory
 {
-
     /**
-     * Возвращает экземпляр обратчика типа ApiHandler
-     * @param AmoCRMApiClient $apiClient
-     * @param GetTokenInterface $getTokenInterface
-     * @param RouterInterface $router
-     * @return ApiHandler
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
      */
-    public function getApiHandler(
-        AmoCRMApiClient $apiClient,
-        GetTokenInterface $getTokenInterface,
-        RouterInterface $router
-    ): ApiHandler {
-        return new MainApiHandler($apiClient, $getTokenInterface, $router);
+    public function __invoke(ContainerInterface $container): RequestHandlerInterface
+    {
+        return new MainApiHandler(
+            $this->getApiClient($container),
+            $container->get(GetTokenInterface::class),
+            $container->get(RouterInterface::class)
+        );
     }
 }

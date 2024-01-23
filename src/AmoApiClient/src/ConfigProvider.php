@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace AmoApiClient;
 
 
-use AmoApiClient\Handler\AuthAmoHandler;
-use AmoApiClient\Handler\AuthAmoHandlerFactory;
+use AmoApiClient\Handler\AuthApiHandler;
+use AmoApiClient\Handler\AuthApiHandlerFactory;
 use AmoApiClient\Handler\ContactsApiHandler;
 use AmoApiClient\Handler\ContactsApiHandlerFactory;
 use AmoApiClient\Handler\MainApiHandler;
@@ -23,6 +23,9 @@ use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoApiClient\Services\AccessTokenService\GetTokenService;
 use AmoApiClient\Services\AccessTokenService\SaveTokenInterface;
 use AmoApiClient\Services\AccessTokenService\SaveTokenService;
+use AmoApiClient\Services\ContactServices\AbstractContactService;
+use AmoApiClient\Services\ContactServices\ContactService;
+use AmoApiClient\Services\ContactServices\GetNamesWithEmailsInterface;
 use AmoApiClient\Services\OAuth\OAuthConfig;
 use AmoApiClient\Services\OAuth\OAuthService;
 use AmoCRM\OAuth\OAuthConfigInterface;
@@ -62,13 +65,14 @@ class ConfigProvider
                 OAuthServiceInterface::class => OAuthService::class,
                 OAuthConfigInterface::class => OAuthConfig::class,
                 Dotenv::class => Dotenv::class,
+                GetNamesWithEmailsInterface::class => ContactService::class,
             ],
             'factories'  => [
                 MainApiHandler::class => MainApiHandlerFactory::class,
                 ContactsApiHandler::class => ContactsApiHandlerFactory::class,
                 AccessTokenService::class => AccessTokenServiceFactory::class,
                 ApiAmoAuthMiddleware::class => ApiAmoAuthMiddlewareFactory::class,
-                AuthAmoHandler::class => AuthAmoHandlerFactory::class,
+                AuthApiHandler::class => AuthApiHandlerFactory::class,
                 RedirectUriApiHandler::class => RedirectUriApiHandlerFactory::class,
                 DotEnvMiddleware::class => DotEnvMiddlewareFactory::class,
             ],

@@ -19,7 +19,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class RedirectUriApiHandler implements RequestHandlerInterface
 {
-
     /**
      * Интерфейс для сохранения данных Access Token в файле
      * @var SaveTokenInterface

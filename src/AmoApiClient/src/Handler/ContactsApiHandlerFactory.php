@@ -5,13 +5,23 @@ declare(strict_types=1);
 namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
-use AmoCRM\Client\AmoCRMApiClient;
+use AmoApiClient\Services\ContactServices\GetNamesWithEmailsInterface;
 use Mezzio\Router\RouterInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class ContactsApiHandlerFactory extends ApiHandlerFactory
+/**
+ * Фабрика генерации ContactsApiHandler обработчика
+ */
+class ContactsApiHandlerFactory extends AbstractApiHandlerFactory
 {
-    public function getApiHandler(AmoCRMApiClient $apiClient, GetTokenInterface $getTokenInterface, RouterInterface $router): ApiHandler
+    public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
-        return new ContactsApiHandler($apiClient, $getTokenInterface, $router);
+        return new ContactsApiHandler(
+            $this->getApiClient($container),
+            $container->get(GetTokenInterface::class),
+            $container->get(GetNamesWithEmailsInterface::class),
+            $container->get(RouterInterface::class)
+        );
     }
 }

@@ -5,16 +5,51 @@ declare(strict_types=1);
 namespace AmoApiClient\Handler;
 
 use AmoApiClient\Constants\AmoApiConstants;
+use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
+use AmoApiClient\Services\ContactServices\GetNamesWithEmailsInterface;
+use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
-use AmoCRM\Filters\ContactsFilter;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class ContactsApiHandler extends ApiHandler implements RequestHandlerInterface
+/**
+ * Класс обработчика для запросов получения контактов
+ */
+class ContactsApiHandler implements RequestHandlerInterface
 {
+    /**
+     * @var AmoCRMApiClient
+     */
+    private AmoCRMApiClient $apiClient;
+    /**
+     * @var GetTokenInterface
+     */
+    private GetTokenInterface $getTokenService;
+    /**
+     * @var RouterInterface
+     */
+    private RouterInterface $router;
+    /**
+     * @var GetNamesWithEmailsInterface
+     */
+    private GetNamesWithEmailsInterface $contactService;
+
+    public function __construct(
+        AmoCRMApiClient $apiClient,
+        GetTokenInterface $getTokenService,
+        GetNamesWithEmailsInterface $contactService,
+        RouterInterface $router
+    ) {
+        $this->apiClient = $apiClient;
+        $this->getTokenService = $getTokenService;
+        $this->contactService = $contactService;
+        $this->router = $router;
+    }
+
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         $accessToken = $this->getTokenService->get(AmoApiConstants::TOKEN_FILE);
@@ -31,25 +66,10 @@ class ContactsApiHandler extends ApiHandler implements RequestHandlerInterface
         }
         $this->apiClient->setAccessToken($accessToken)->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
 
-        $filter = new ContactsFilter();
         $contacts = $this->apiClient->setAccessToken($accessToken)->contacts()->get();
 
+        $contactsNamesAndEmailsArray = $this->contactService->getNamesWithEmails($contacts);
 
-        $contactsArray = [];
-        foreach ($contacts as $contact) {
-
-            $customFields = $contact->getCustomFieldsValues();
-            $contactEmailField = $customFields->getBy('fieldCode', 'EMAIL');
-            $email = $contactEmailField
-                ? $contactEmailField->getValues()->current()->getValue()
-                : null;
-
-            $contactsArray[] = [
-                'name' => $contact->getName(),
-                'email' => $email,
-            ];
-        }
-
-        return new JsonResponse($contactsArray);
+        return new JsonResponse($contactsNamesAndEmailsArray);
     }
 }
