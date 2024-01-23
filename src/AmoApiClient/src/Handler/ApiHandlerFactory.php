@@ -11,6 +11,10 @@ use Mezzio\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Dotenv\Dotenv;
 
+/**
+ * Абстрактный родительский класс фабрик
+ * для обработчков, которые работают с API AMO
+ */
 abstract class ApiHandlerFactory
 {
     public function __invoke(ContainerInterface $container): ApiHandler
@@ -29,6 +33,13 @@ abstract class ApiHandlerFactory
         );
     }
 
+    /**
+     * Метод для получения экземпляра класс обработчика
+     * @param AmoCRMApiClient $apiClient
+     * @param GetTokenInterface $getTokenInterface
+     * @param RouterInterface $router
+     * @return ApiHandler
+     */
     abstract public function getApiHandler(
         AmoCRMApiClient $apiClient,
         GetTokenInterface $getTokenInterface,

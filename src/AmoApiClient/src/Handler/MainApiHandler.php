@@ -18,8 +18,15 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Класс обработчика отвестенного за главную страницу /amo/main
+ */
 class MainApiHandler extends ApiHandler implements RequestHandlerInterface
 {
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         $accessToken = $this->getTokenService->get(AmoApiConstants::TOKEN_FILE);

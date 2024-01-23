@@ -6,6 +6,7 @@ namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AccessTokenService\SaveTokenInterface;
 use AmoCRM\Client\AmoCRMApiClient;
+use AmoCRM\Exceptions\AmoCRMoAuthApiException;
 use http\Exception\RuntimeException;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Router\RouterInterface;
@@ -13,10 +14,27 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Класс обработчика отвественного за получение и обработку данных
+ * авторизации полученных от AmoCRM. /amo_redirect_uri
+ */
 class RedirectUriApiHandler implements RequestHandlerInterface
 {
+
+    /**
+     * Интерфейс для сохранения данных Access Token в файле
+     * @var SaveTokenInterface
+     */
     private SaveTokenInterface $saveTokenService;
+    /**
+     * Объект API клиента
+     * @var AmoCRMApiClient
+     */
     private AmoCRMApiClient $apiClient;
+    /**
+     * Интерфейс для работы с роутингом
+     * @var RouterInterface
+     */
     private RouterInterface $router;
 
     public function __construct(
@@ -29,6 +47,11 @@ class RedirectUriApiHandler implements RequestHandlerInterface
         $this->router = $router;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws AmoCRMoAuthApiException
+     */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         $queryParams = $request->getQueryParams();

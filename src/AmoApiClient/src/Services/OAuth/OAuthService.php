@@ -6,11 +6,17 @@ use AmoApiClient\Constants\AmoApiConstants;
 use AmoCRM\OAuth\OAuthServiceInterface;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 
+/**
+ * Класс реализующий интерфейс необходимый для фабрики AmoCRMApiClient.
+ * Класс предоставляет интерфейс сохранения токера
+ */
 class OAuthService implements OAuthServiceInterface
 {
-
     /**
-     * @inheritDoc
+     * Мето сохранеия Access Token в файле
+     * @param AccessTokenInterface $accessToken
+     * @param string $baseDomain
+     * @return void
      */
     public function saveOAuthToken(AccessTokenInterface $accessToken, string $baseDomain): void
     {

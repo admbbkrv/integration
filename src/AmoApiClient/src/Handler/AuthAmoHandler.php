@@ -10,9 +10,17 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Random\RandomException;
 
+/**
+ * Класс обработчка, который отвественен за страницу авторизации API AmoCRN /auth
+ */
 class AuthAmoHandler implements RequestHandlerInterface
 {
+    /**
+     * Объект API клиента
+     * @var AmoCRMApiClient
+     */
     private AmoCRMApiClient $apiClient;
 
     public function __construct(AmoCRMApiClient $apiClient)
@@ -20,6 +28,11 @@ class AuthAmoHandler implements RequestHandlerInterface
         $this->apiClient = $apiClient;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws RandomException
+     */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         if (!session_status()) {

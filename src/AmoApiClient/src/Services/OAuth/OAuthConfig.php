@@ -4,11 +4,14 @@ namespace AmoApiClient\Services\OAuth;
 
 use AmoCRM\OAuth\OAuthConfigInterface;
 
+/**
+ * Класс получения данных интеграции для ее аутенцификации
+ */
 class OAuthConfig implements OAuthConfigInterface
 {
-
     /**
-     * @inheritDoc
+     * Возвращает CLIENT_ID интеграции
+     * @return string
      */
     public function getIntegrationId(): string
     {
@@ -16,7 +19,8 @@ class OAuthConfig implements OAuthConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * Возвращает CLIENT_SECRET интеграции
+     * @return string
      */
     public function getSecretKey(): string
     {
@@ -24,7 +28,8 @@ class OAuthConfig implements OAuthConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * Возвращает CLIENT_REDIRECT_URI интеграции
+     * @return string
      */
     public function getRedirectDomain(): string
     {

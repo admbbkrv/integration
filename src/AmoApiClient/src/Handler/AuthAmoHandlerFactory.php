@@ -10,6 +10,9 @@ use AmoCRM\OAuth\OAuthConfigInterface;
 use AmoCRM\OAuth\OAuthServiceInterface;
 use Psr\Container\ContainerInterface;
 
+/**
+ * Фабрика для генерации AuthAmoHandler обработчика
+ */
 class AuthAmoHandlerFactory
 {
     public function __invoke(ContainerInterface $container): AuthAmoHandler

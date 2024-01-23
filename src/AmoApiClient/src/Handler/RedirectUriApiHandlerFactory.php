@@ -9,10 +9,21 @@ use AmoCRM\Client\AmoCRMApiClientFactory;
 use AmoCRM\OAuth\OAuthConfigInterface;
 use AmoCRM\OAuth\OAuthServiceInterface;
 use Mezzio\Router\RouterInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ * Класс фабрики для генерации RedirectUriApiHandler обработчика
+ */
 class RedirectUriApiHandlerFactory
 {
+    /**
+     * @param ContainerInterface $container
+     * @return RedirectUriApiHandler
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container) : RedirectUriApiHandler
     {
         $apiClientFactory = new AmoCRMApiClientFactory(

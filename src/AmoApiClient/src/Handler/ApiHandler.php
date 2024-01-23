@@ -9,6 +9,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Абстрактный родительский класс обработчиков
+ * для работы с API AmoCRM
+ */
 abstract class ApiHandler implements RequestHandlerInterface
 {
     /**
@@ -16,7 +20,15 @@ abstract class ApiHandler implements RequestHandlerInterface
      * @var AmoCRMApiClient
      */
     protected AmoCRMApiClient $apiClient;
+    /**
+     * Интерфейс для получения файла Access Token
+     * @var GetTokenInterface
+     */
     protected GetTokenInterface $getTokenService;
+    /**
+     * Интерфейс для работы с роутингом
+     * @var RouterInterface
+     */
     protected RouterInterface $router;
 
     public function __construct(
