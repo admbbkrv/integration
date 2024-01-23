@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Handler;
 
+use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoCRM\Client\AmoCRMApiClient;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Random\RandomException;
 
-class GetApiTokenHandler implements RequestHandlerInterface
+/**
+ * Класс обработчка, который отвественен за страницу авторизации API AmoCRN /auth
+ */
+class AuthAmoHandler implements RequestHandlerInterface
 {
     /**
-     * Клиент для работы с API
+     * Объект API клиента
      * @var AmoCRMApiClient
      */
     private AmoCRMApiClient $apiClient;
@@ -23,14 +28,23 @@ class GetApiTokenHandler implements RequestHandlerInterface
         $this->apiClient = $apiClient;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws RandomException
+     */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        $state = bin2hex(random_bytes(16));
+        if (!session_status()) {
+            session_start();
+        }
 
-        //Генерации ссылки с параметрами на страницу авторизации
+        $state = bin2hex(random_bytes(16));
+        $_SESSION['oauth2state'] = $state;
+
         $authorizationUrl = $this->apiClient->getOAuthClient()->getAuthorizeUrl([
             'state' => $state,
-            'mode' => 'post_message', //post_message - редирект произойдет в открытом окне, popup - редирект произойдет в окне родителе
+            'mode' => 'post_message',
         ]);
 
         return new RedirectResponse($authorizationUrl);
