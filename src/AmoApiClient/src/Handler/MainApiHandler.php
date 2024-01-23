@@ -25,7 +25,11 @@ class MainApiHandler extends ApiHandler implements RequestHandlerInterface
     {
         $accessToken = $this->getTokenService->get(AmoApiConstants::TOKEN_FILE);
 
+        if ($accessToken === null) {
+            $uri = $this->router->generateUri('amo_auth');
 
+            return new RedirectResponse($uri);
+        }
 
         if ($accessToken->hasExpired()) {
             try {
