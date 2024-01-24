@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Handler;
 
-use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoCRM\Client\AmoCRMApiClient;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -15,7 +14,7 @@ use Random\RandomException;
 /**
  * Класс обработчка, который отвественен за страницу авторизации API AmoCRN /auth
  */
-class AuthAmoHandler implements RequestHandlerInterface
+class AuthApiHandler implements RequestHandlerInterface
 {
     /**
      * Объект API клиента
@@ -28,11 +27,6 @@ class AuthAmoHandler implements RequestHandlerInterface
         $this->apiClient = $apiClient;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws RandomException
-     */
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         if (!session_status()) {

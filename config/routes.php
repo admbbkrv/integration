@@ -38,9 +38,10 @@ use Psr\Container\ContainerInterface;
  */
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
-    $app->get('/auth', \AmoApiClient\Handler\AuthAmoHandler::class, 'amo_auth');
+    $app->get('/auth', \AmoApiClient\Handler\AuthApiHandler::class, 'amo_auth');
     $app->get('/amo_redirect_uri', \AmoApiClient\Handler\RedirectUriApiHandler::class, 'amo_redirect_uri');
 
     //Пути для работы API интеграции
-    $app->get('/amo/main', \AmoApiClient\Handler\MainApiHandler::class, 'amo_main');
+    $app->get('/amo/main', \AmoApiClient\Handler\MainApiHandler::class, 'amo.main');
+    $app->get('/amo/contacts', \AmoApiClient\Handler\ContactsApiHandler::class, 'amo.contacts');
 };

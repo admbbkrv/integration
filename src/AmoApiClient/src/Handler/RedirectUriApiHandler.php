@@ -19,7 +19,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class RedirectUriApiHandler implements RequestHandlerInterface
 {
-
     /**
      * Интерфейс для сохранения данных Access Token в файле
      * @var SaveTokenInterface
@@ -68,7 +67,7 @@ class RedirectUriApiHandler implements RequestHandlerInterface
             'baseDomain' => $this->apiClient->getAccountBaseDomain(),
         ]);
 
-        $uri = $this->router->generateUri('amo_main');
+        $uri = $this->router->generateUri('amo.main');
 
         return new RedirectResponse($uri);
     }

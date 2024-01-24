@@ -6,12 +6,22 @@ namespace AmoApiClient\Middleware;
 
 use AmoApiClient\Constants\AmoApiConstants;
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
-use AmoCRM\Client\AmoCRMApiClient;
 use Mezzio\Router\RouterInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ * Фабрика генерации middleware ApiAmoAuthMiddleware
+ */
 class ApiAmoAuthMiddlewareFactory
 {
+    /**
+     * @param ContainerInterface $container
+     * @return ApiAmoAuthMiddleware
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container) : ApiAmoAuthMiddleware
     {
         $getTokenService = $container->get(GetTokenInterface::class);

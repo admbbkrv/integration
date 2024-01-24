@@ -6,6 +6,7 @@ namespace AmoApiClient\Handler;
 
 use AmoApiClient\Constants\AmoApiConstants;
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
+use AmoApiClient\Services\ContactServices\GetNamesWithEmailsInterface;
 use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -16,9 +17,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Класс обработчика запросов на галвную страницу /amo/main
+ * Класс обработчика для запросов получения контактов
  */
-class MainApiHandler implements RequestHandlerInterface
+class ContactsApiHandler implements RequestHandlerInterface
 {
     /**
      * @var AmoCRMApiClient
@@ -32,14 +33,20 @@ class MainApiHandler implements RequestHandlerInterface
      * @var RouterInterface
      */
     private RouterInterface $router;
+    /**
+     * @var GetNamesWithEmailsInterface
+     */
+    private GetNamesWithEmailsInterface $contactService;
 
     public function __construct(
         AmoCRMApiClient $apiClient,
         GetTokenInterface $getTokenService,
+        GetNamesWithEmailsInterface $contactService,
         RouterInterface $router
     ) {
         $this->apiClient = $apiClient;
         $this->getTokenService = $getTokenService;
+        $this->contactService = $contactService;
         $this->router = $router;
     }
 
@@ -57,9 +64,10 @@ class MainApiHandler implements RequestHandlerInterface
                 return new RedirectResponse($uri);
             }
         }
+        $this->apiClient->setAccessToken($accessToken)->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
+        $contacts = $this->apiClient->contacts()->get();
+        $contactsNamesAndEmailsArray = $this->contactService->getNamesWithEmails($contacts);
 
-        $ownerDetails = $this->apiClient->getOAuthClient()->getResourceOwner($accessToken)->toArray();
-
-        return new JsonResponse($ownerDetails);
+        return new JsonResponse($contactsNamesAndEmailsArray);
     }
 }
