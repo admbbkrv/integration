@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
@@ -9,7 +11,6 @@ use AmoCRM\OAuth\OAuthConfigInterface;
 use AmoCRM\OAuth\OAuthServiceInterface;
 use Mezzio\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Абстрактный родительский класс фабрик

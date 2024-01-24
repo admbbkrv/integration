@@ -68,7 +68,7 @@ class RedirectUriApiHandler implements RequestHandlerInterface
             'baseDomain' => $this->apiClient->getAccountBaseDomain(),
         ]);
 
-        $uri = $this->router->generateUri('amo_main');
+        $uri = $this->router->generateUri('amo.main');
 
         return new RedirectResponse($uri);
     }

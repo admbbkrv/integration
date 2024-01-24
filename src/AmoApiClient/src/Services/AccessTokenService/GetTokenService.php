@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AmoApiClient\Services\AccessTokenService;
 
-use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use Illuminate\Validation\ValidationException;
 use League\OAuth2\Client\Token\AccessToken;
 use RuntimeException;

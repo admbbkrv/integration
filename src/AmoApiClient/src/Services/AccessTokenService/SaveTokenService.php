@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AmoApiClient\Services\AccessTokenService;
 
 use AmoApiClient\Constants\AmoApiConstants;

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Handler;
 
-use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoCRM\Client\AmoCRMApiClientFactory;
 use AmoCRM\OAuth\OAuthConfigInterface;
 use AmoCRM\OAuth\OAuthServiceInterface;

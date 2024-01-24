@@ -11,6 +11,7 @@ class AmoApiConstants
 {
     /**
      * Путь к Access Token файлу
+     * @var string
      */
-    public const TOKEN_FILE = DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'token_info.json';
+    public const  TOKEN_FILE = DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'token_info.json';
 }

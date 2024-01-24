@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;

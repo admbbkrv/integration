@@ -12,6 +12,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Класс middleware для проверки наличия токена авторизации
+ */
 class ApiAmoAuthMiddleware implements MiddlewareInterface
 {
     private ?AccessTokenInterface $accessToken;

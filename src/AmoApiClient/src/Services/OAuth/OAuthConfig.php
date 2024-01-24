@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AmoApiClient\Services\OAuth;
 
 use AmoCRM\OAuth\OAuthConfigInterface;

@@ -10,6 +10,9 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Component\Dotenv\Dotenv;
 
+/**
+ * Класс middleware для подгрузки env файла
+ */
 class DotEnvMiddleware implements MiddlewareInterface
 {
     private Dotenv $dotenv;

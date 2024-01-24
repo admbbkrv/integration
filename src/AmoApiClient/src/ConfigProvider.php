@@ -7,6 +7,8 @@ namespace AmoApiClient;
 
 use AmoApiClient\Handler\AuthAmoHandler;
 use AmoApiClient\Handler\AuthAmoHandlerFactory;
+use AmoApiClient\Handler\ContactsApiHandler;
+use AmoApiClient\Handler\ContactsApiHandlerFactory;
 use AmoApiClient\Handler\MainApiHandler;
 use AmoApiClient\Handler\MainApiHandlerFactory;
 use AmoApiClient\Handler\RedirectUriApiHandler;
@@ -63,6 +65,7 @@ class ConfigProvider
             ],
             'factories'  => [
                 MainApiHandler::class => MainApiHandlerFactory::class,
+                ContactsApiHandler::class => ContactsApiHandlerFactory::class,
                 AccessTokenService::class => AccessTokenServiceFactory::class,
                 ApiAmoAuthMiddleware::class => ApiAmoAuthMiddlewareFactory::class,
                 AuthAmoHandler::class => AuthAmoHandlerFactory::class,
