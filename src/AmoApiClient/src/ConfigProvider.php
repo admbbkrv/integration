@@ -23,7 +23,6 @@ use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoApiClient\Services\AccessTokenService\GetTokenService;
 use AmoApiClient\Services\AccessTokenService\SaveTokenInterface;
 use AmoApiClient\Services\AccessTokenService\SaveTokenService;
-use AmoApiClient\Services\ContactServices\AbstractContactService;
 use AmoApiClient\Services\ContactServices\ContactService;
 use AmoApiClient\Services\ContactServices\GetNamesWithEmailsInterface;
 use AmoApiClient\Services\OAuth\OAuthConfig;

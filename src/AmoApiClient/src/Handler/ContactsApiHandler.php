@@ -65,9 +65,7 @@ class ContactsApiHandler implements RequestHandlerInterface
             }
         }
         $this->apiClient->setAccessToken($accessToken)->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
-
-        $contacts = $this->apiClient->setAccessToken($accessToken)->contacts()->get();
-
+        $contacts = $this->apiClient->contacts()->get();
         $contactsNamesAndEmailsArray = $this->contactService->getNamesWithEmails($contacts);
 
         return new JsonResponse($contactsNamesAndEmailsArray);
