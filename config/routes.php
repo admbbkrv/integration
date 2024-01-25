@@ -41,7 +41,10 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/auth', \AmoApiClient\Handler\AuthApiHandler::class, 'amo_auth');
     $app->get('/amo_redirect_uri', \AmoApiClient\Handler\RedirectUriApiHandler::class, 'amo_redirect_uri');
 
-    //Пути для работы API интеграции
+    //Пути для работы API AmoCRM
     $app->get('/amo/main', \AmoApiClient\Handler\MainApiHandler::class, 'amo.main');
     $app->get('/amo/contacts', \AmoApiClient\Handler\ContactsApiHandler::class, 'amo.contacts');
+
+    //Пути для работы API Unisender
+    $app->get('/unis/contact', \UnisenderApi\Handler\GetContactUnisApiHandler::class, 'unis.contact');
 };
