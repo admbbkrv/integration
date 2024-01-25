@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
-use Unisender\ApiWrapper\UnisenderApi;
+use UnisenderApi\Handler\Traits\GetUnisenderApiServiceTrait;
 use UnisenderApi\Services\GetContactInterface;
 
 /**
@@ -19,11 +19,8 @@ use UnisenderApi\Services\GetContactInterface;
  */
 class GetContactUnisApiHandler implements RequestHandlerInterface
 {
-    /**
-     * Сервис для работы с API Unisender
-     * @var UnisenderApi
-     */
-    private UnisenderApi $unisenderApi;
+    use GetUnisenderApiServiceTrait;
+
     /**
      * Интерфейс получения контакта из Unisender
      * @var GetContactInterface
@@ -31,21 +28,19 @@ class GetContactUnisApiHandler implements RequestHandlerInterface
     private GetContactInterface $getContactService;
 
     public function __construct(
-        UnisenderApi $unisenderApi,
         GetContactInterface $getContactService
     ) {
-        $this->unisenderApi = $unisenderApi;
         $this->getContactService = $getContactService;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $queryParams = $request->getQueryParams();
-
+        $unisenderApi = $this->getUnisenderApi();
         try {
             if ($queryParams['email']) {
                 $response = $this->getContactService->getContact(
-                    $this->unisenderApi,
+                    $unisenderApi,
                     $queryParams['email']
                 );
                 return new JsonResponse($response);

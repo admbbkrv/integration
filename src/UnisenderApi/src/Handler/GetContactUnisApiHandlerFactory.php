@@ -10,12 +10,11 @@ use UnisenderApi\Services\GetContactInterface;
 /**
  * Фабрика для генерации GetContactUnisApiHandler обработчика
  */
-class GetContactUnisApiHandlerFactory extends AbstractApiUnisHandlerFactory
+class GetContactUnisApiHandlerFactory
 {
     public function __invoke(ContainerInterface $container) : GetContactUnisApiHandler
     {
         return new GetContactUnisApiHandler(
-            $this->getUnisenderApi(),
             $container->get(GetContactInterface::class)
         );
     }
