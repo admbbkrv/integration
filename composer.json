@@ -52,7 +52,8 @@
         "laminas/laminas-stdlib": "^3.6",
         "mezzio/mezzio": "^3.7",
         "mezzio/mezzio-fastroute": "^3.0.3",
-        "mezzio/mezzio-helpers": "^5.7"
+        "mezzio/mezzio-helpers": "^5.7",
+        "unisender/api-wrapper": "^1.6"
     },
     "require-dev": {
         "laminas/laminas-development-mode": "^3.3.0",
@@ -64,7 +65,8 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/App/",
-            "AmoApiClient\\": "src/AmoApiClient/src/"
+            "AmoApiClient\\": "src/AmoApiClient/src/",
+            "UnisenderApi\\": "src/UnisenderApi/src/"
         }
     },
     "autoload-dev": {
