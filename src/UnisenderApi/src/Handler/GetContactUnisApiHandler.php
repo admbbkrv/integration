@@ -41,6 +41,7 @@ class GetContactUnisApiHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
         $queryParams = $request->getQueryParams();
+
         try {
             if ($queryParams['email']) {
                 $response = $this->getContactService->getContact(

@@ -7,6 +7,9 @@ namespace UnisenderApi\Handler;
 use Psr\Container\ContainerInterface;
 use UnisenderApi\Services\GetContactInterface;
 
+/**
+ * Фабрика для генерации GetContactUnisApiHandler обработчика
+ */
 class GetContactUnisApiHandlerFactory extends AbstractApiUnisHandlerFactory
 {
     public function __invoke(ContainerInterface $container) : GetContactUnisApiHandler
