@@ -38,7 +38,7 @@ class GetContactUnisApiHandler implements RequestHandlerInterface
         $this->getContactService = $getContactService;
     }
 
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $queryParams = $request->getQueryParams();
 
@@ -53,7 +53,11 @@ class GetContactUnisApiHandler implements RequestHandlerInterface
 
             throw new Exception('В запросе не передан email для получения контакта');
         } catch (Throwable $throwable) {
-            exit($throwable->getMessage());
+            $response = [
+                'error' => $throwable->getMessage(),
+            ];
+
+            return new JsonResponse($response);
         }
     }
 }
