@@ -6,8 +6,14 @@ namespace UnisenderApi;
 
 use UnisenderApi\Handler\GetContactUnisApiHandler;
 use UnisenderApi\Handler\GetContactUnisApiHandlerFactory;
+use UnisenderApi\Handler\ImportContactsUnisHandler;
+use UnisenderApi\Handler\ImportContactsUnisHandlerFactory;
 use UnisenderApi\Services\GetContactInterface;
 use UnisenderApi\Services\GetContactService;
+use UnisenderApi\Services\ImportContactsInterface;
+use UnisenderApi\Services\ImportContactsService;
+use UnisenderApi\Services\PrepareForImportInterface;
+use UnisenderApi\Services\PrepareForImportService;
 
 /**
  * The configuration provider for the UnisenderApi module
@@ -38,9 +44,12 @@ class ConfigProvider
         return [
             'invokables' => [
                 GetContactInterface::class => GetContactService::class,
+                PrepareForImportInterface::class => PrepareForImportService::class,
+                ImportContactsInterface::class => ImportContactsService::class,
             ],
             'factories'  => [
                 GetContactUnisApiHandler::class => GetContactUnisApiHandlerFactory::class,
+                ImportContactsUnisHandler::class => ImportContactsUnisHandlerFactory::class,
             ],
         ];
     }
