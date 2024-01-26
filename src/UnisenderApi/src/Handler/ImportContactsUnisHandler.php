@@ -122,9 +122,7 @@ class ImportContactsUnisHandler implements RequestHandlerInterface
 
             $response = [
                 'error' => [
-                    'exception' => get_class($throwable),
-                    'error_code' => $throwable->getCode(),
-                    'message' => $throwable->getMessage(),
+                    'message' => 'Упс, что-то пошло не так',
                 ]
             ];
 
