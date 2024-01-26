@@ -25,7 +25,6 @@ class ImportContactsService implements ImportContactsInterface
             foreach ($chunks as $chunk) {
                 $responce = $unisenderApi->importContacts($chunk);
                 $result[] = json_decode($responce, true);
-                sleep(30);
             }
 
             return $result;
