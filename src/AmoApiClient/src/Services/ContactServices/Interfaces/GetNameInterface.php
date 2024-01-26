@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AmoApiClient\Services\ContactServices;
+namespace AmoApiClient\Services\ContactServices\Interfaces;
 
 use AmoCRM\Models\ContactModel;
 

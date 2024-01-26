@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Services\ContactServices;
 
+use AmoApiClient\Services\ContactServices\Interfaces\GetNamesWithEmailsInterface;
 use AmoCRM\Collections\ContactsCollection;
 
 /**

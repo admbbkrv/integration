@@ -6,7 +6,7 @@ namespace AmoApiClient\Handler;
 
 use AmoApiClient\Constants\AmoApiConstants;
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
-use AmoApiClient\Services\ContactServices\GetNamesWithEmailsInterface;
+use AmoApiClient\Services\ContactServices\Interfaces\GetNamesWithEmailsInterface;
 use AmoCRM\Client\AmoCRMApiClient;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
 use Laminas\Diactoros\Response\JsonResponse;

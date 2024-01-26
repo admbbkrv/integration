@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
-use AmoApiClient\Services\ContactServices\GetNamesWithEmailsInterface;
+use AmoApiClient\Services\ContactServices\Interfaces\GetNamesWithEmailsInterface;
 use Mezzio\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
