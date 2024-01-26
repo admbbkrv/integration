@@ -8,6 +8,7 @@ use AmoApiClient\Constants\AmoApiConstants;
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoApiClient\Services\ContactServices\Interfaces\GetNamesWithEmailsInterface;
 use AmoCRM\Client\AmoCRMApiClient;
+use AmoCRM\Exceptions\AmoCRMApiNoContentException;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -64,9 +65,37 @@ class ContactsApiHandler implements RequestHandlerInterface
                 return new RedirectResponse($uri);
             }
         }
-        $this->apiClient->setAccessToken($accessToken)->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
-        $contacts = $this->apiClient->contacts()->get();
-        $contactsNamesAndEmailsArray = $this->contactService->getNamesWithEmails($contacts);
+
+        try {
+
+            $this->apiClient->setAccessToken($accessToken)->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
+            $contacts = $this->apiClient->contacts()->get();
+            $contactsNamesAndEmailsArray = $this->contactService->getNamesWithEmails($contacts);
+
+        } catch (AmoCRMApiNoContentException $exception) {
+
+            $response = [
+                'error' => [
+                    'exception' => get_class($exception),
+                    'error_code' => $exception->getCode(),
+                    'message' => $exception->getMessage(),
+                ]
+            ];
+
+            return new JsonResponse($response);
+
+        } catch (\Throwable $throwable) {
+
+            $response = [
+                'error' => [
+                    'exception' => get_class($throwable),
+                    'error_code' => $throwable->getCode(),
+                    'message' => $throwable->getMessage(),
+                ]
+            ];
+
+            return new JsonResponse($response);
+        }
 
         return new JsonResponse($contactsNamesAndEmailsArray);
     }

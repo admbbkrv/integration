@@ -8,6 +8,7 @@ use AmoApiClient\Handler\AbstractApiHandlerFactory;
 use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoApiClient\Services\ContactServices\Interfaces\FilterWithEmailInterface;
 use AmoApiClient\Services\ContactServices\Interfaces\GetAllContactsInterface;
+use Mezzio\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
 use UnisenderApi\Handler\Traits\GetUnisenderApiServiceTrait;
 use UnisenderApi\Services\ImportContactsInterface;
@@ -26,7 +27,8 @@ class ImportContactsUnisHandlerFactory extends AbstractApiHandlerFactory
             $container->get(FilterWithEmailInterface::class),
             $container->get(PrepareForImportInterface::class),
             $container->get(GetTokenInterface::class),
-            $container->get(ImportContactsInterface::class)
+            $container->get(ImportContactsInterface::class),
+            $container->get(RouterInterface::class)
         );
     }
 }

@@ -9,9 +9,11 @@ use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoApiClient\Services\ContactServices\Interfaces\FilterWithEmailInterface;
 use AmoApiClient\Services\ContactServices\Interfaces\GetAllContactsInterface;
 use AmoCRM\Client\AmoCRMApiClient;
+use AmoCRM\Exceptions\AmoCRMApiNoContentException;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -52,6 +54,10 @@ class ImportContactsUnisHandler implements RequestHandlerInterface
      * @var ImportContactsInterface
      */
     private ImportContactsInterface $importContactsService;
+    /**
+     * @var RouterInterface
+     */
+    private RouterInterface $router;
 
     public function __construct(
         AmoCRMApiClient $apiClient,
@@ -60,7 +66,8 @@ class ImportContactsUnisHandler implements RequestHandlerInterface
         FilterWithEmailInterface $filterWithEmailService,
         PrepareForImportInterface $prepareForImportService,
         GetTokenInterface $getTokenService,
-        ImportContactsInterface $importContactsService
+        ImportContactsInterface $importContactsService,
+        RouterInterface $router
     ) {
         $this->apiClient = $apiClient;
         $this->unisenderApi = $unisenderApi;
@@ -69,6 +76,7 @@ class ImportContactsUnisHandler implements RequestHandlerInterface
         $this->prepareForImportService = $prepareForImportService;
         $this->getTokenService = $getTokenService;
         $this->importContactsService = $importContactsService;
+        $this->router = $router;
     }
 
     public function handle(ServerRequestInterface $request) : ResponseInterface
@@ -85,15 +93,43 @@ class ImportContactsUnisHandler implements RequestHandlerInterface
                 return new RedirectResponse($uri);
             }
         }
-        $this->apiClient->setAccessToken($accessToken)->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
 
-        $contactsCollection = $this->getContactsService->getContacts($this->apiClient);
+        try {
 
-        $contactsCollectionWithEmail = $this->filterWithEmailService->filterWithEmail($contactsCollection);
+            $this->apiClient->setAccessToken($accessToken)->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
 
-        $preparedContacts = $this->prepareForImportService->prepare($contactsCollectionWithEmail);
+            $contactsCollection = $this->getContactsService->getContacts($this->apiClient);
 
-        $responce = $this->importContactsService->importContacts($preparedContacts, $this->unisenderApi);
+            $contactsCollectionWithEmail = $this->filterWithEmailService->filterWithEmail($contactsCollection);
+
+            $preparedContacts = $this->prepareForImportService->prepare($contactsCollectionWithEmail);
+
+            $responce = $this->importContactsService->importContacts($preparedContacts, $this->unisenderApi);
+
+        } catch (AmoCRMApiNoContentException $exception) {
+
+            $response = [
+                'error' => [
+                    'exception' => get_class($exception),
+                    'error_code' => $exception->getCode(),
+                    'message' => $exception->getMessage(),
+                ]
+            ];
+
+            return new JsonResponse($response);
+
+        } catch (\Throwable $throwable) {
+
+            $response = [
+                'error' => [
+                    'exception' => get_class($throwable),
+                    'error_code' => $throwable->getCode(),
+                    'message' => $throwable->getMessage(),
+                ]
+            ];
+
+            return new JsonResponse($response);
+        }
 
         return new JsonResponse($responce);
     }
