@@ -18,6 +18,20 @@ class GetAllContactsService implements GetAllContactsInterface
      */
     public function getContacts(AmoCRMApiClient $apiClient): ContactsCollection
     {
-        return $apiClient->contacts()->get();
+        $contactCollection = $apiClient->contacts()->get();
+        $currentPageCollection = $contactCollection;
+
+        //проверка есть ли следующая страница
+        while ($currentPageCollection->getNextPageLink()) {
+
+            $nextPageCollection = $apiClient->contacts()
+                ->nextPage($currentPageCollection);
+
+            $currentPageCollection = $nextPageCollection;
+
+            $contactCollection = $contactCollection->merge($nextPageCollection);
+        }
+
+        return $contactCollection;
     }
 }
