@@ -72,4 +72,11 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         \UnisenderApi\Handler\GetContactUnisApiHandler::class,
         'unis.contact'
     );
+
+    //пути для работы с БД
+    $app->get(
+        '/db/user/create',
+        \DataBase\Handler\CreateUserHandler::class,
+        'db.user.create'
+    );
 };
