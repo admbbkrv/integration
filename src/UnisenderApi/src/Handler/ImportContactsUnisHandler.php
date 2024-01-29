@@ -17,6 +17,7 @@ use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 use Unisender\ApiWrapper\UnisenderApi;
 use UnisenderApi\Services\ImportContactsInterface;
 use UnisenderApi\Services\PrepareForImportInterface;
@@ -79,13 +80,18 @@ class ImportContactsUnisHandler implements RequestHandlerInterface
         $this->router = $router;
     }
 
-    public function handle(ServerRequestInterface $request) : ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $accessToken = $this->getTokenService->get(AmoApiConstants::TOKEN_FILE);
 
         if ($accessToken->hasExpired()) {
             try {
-                $accessToken = $this->apiClient->getOAuthClient()->getAccessTokenByRefreshToken($accessToken->getRefreshToken());
+
+                $accessToken = $this->apiClient->getOAuthClient()
+                    ->getAccessTokenByRefreshToken(
+                        $accessToken->getRefreshToken()
+                    );
+
             } catch (AmoCRMoAuthApiException $e) {
 
                 $uri = $this->router->generateUri('amo_auth');
@@ -96,15 +102,21 @@ class ImportContactsUnisHandler implements RequestHandlerInterface
 
         try {
 
-            $this->apiClient->setAccessToken($accessToken)->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
+            $this->apiClient
+                ->setAccessToken($accessToken)
+                ->setAccountBaseDomain($accessToken->getValues()['baseDomain']);
 
-            $contactsCollection = $this->getContactsService->getContacts($this->apiClient);
+            $contactsCollection = $this->getContactsService
+                ->getContacts($this->apiClient);
 
-            $contactsCollectionWithEmail = $this->filterWithEmailService->filterWithEmail($contactsCollection);
+            $contactsCollectionWithEmail = $this->filterWithEmailService
+                ->filterWithEmail($contactsCollection);
 
-            $preparedContacts = $this->prepareForImportService->prepare($contactsCollectionWithEmail);
+            $preparedContacts = $this->prepareForImportService
+                ->prepare($contactsCollectionWithEmail);
 
-            $responce = $this->importContactsService->importContacts($preparedContacts, $this->unisenderApi);
+            $responce = $this->importContactsService
+                ->importContacts($preparedContacts, $this->unisenderApi);
 
         } catch (AmoCRMApiNoContentException $exception) {
 
@@ -118,7 +130,7 @@ class ImportContactsUnisHandler implements RequestHandlerInterface
 
             return new JsonResponse($response);
 
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
 
             $response = [
                 'error' => [

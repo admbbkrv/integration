@@ -18,7 +18,7 @@ class ImportContactsUnisHandlerFactory extends AbstractApiHandlerFactory
 {
     use GetUnisenderApiServiceTrait;
 
-    public function __invoke(ContainerInterface $container) : ImportContactsUnisHandler
+    public function __invoke(ContainerInterface $container): ImportContactsUnisHandler
     {
         return new ImportContactsUnisHandler(
             $this->getApiClient($container),

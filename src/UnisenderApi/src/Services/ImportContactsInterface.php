@@ -17,5 +17,8 @@ interface ImportContactsInterface
      * @param UnisenderApi $unisenderApi
      * @return string
      */
-    public function importContacts(array $contacts, UnisenderApi $unisenderApi): array;
+    public function importContacts(
+        array $contacts,
+        UnisenderApi $unisenderApi
+    ): array;
 }

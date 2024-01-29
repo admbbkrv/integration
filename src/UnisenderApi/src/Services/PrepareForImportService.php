@@ -19,7 +19,8 @@ class PrepareForImportService implements PrepareForImportInterface
         $data = [];
         foreach ($contactsCollection as $contactModel) {
             $name = $contactModel->getName();
-            $emails = $contactModel->getCustomFieldsValues()->getBy('fieldCode', 'EMAIL')->getValues();
+            $emails = $contactModel->getCustomFieldsValues()
+                ->getBy('fieldCode', 'EMAIL')->getValues();
 
             foreach ($emails as $email) {
                 $data[] = [
