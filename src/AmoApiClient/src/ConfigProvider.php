@@ -24,7 +24,11 @@ use AmoApiClient\Services\AccessTokenService\GetTokenService;
 use AmoApiClient\Services\AccessTokenService\SaveTokenInterface;
 use AmoApiClient\Services\AccessTokenService\SaveTokenService;
 use AmoApiClient\Services\ContactServices\ContactService;
-use AmoApiClient\Services\ContactServices\GetNamesWithEmailsInterface;
+use AmoApiClient\Services\ContactServices\FilterWithEmailService;
+use AmoApiClient\Services\ContactServices\GetAllContactsService;
+use AmoApiClient\Services\ContactServices\Interfaces\FilterWithEmailInterface;
+use AmoApiClient\Services\ContactServices\Interfaces\GetAllContactsInterface;
+use AmoApiClient\Services\ContactServices\Interfaces\GetNamesWithEmailsInterface;
 use AmoApiClient\Services\OAuth\OAuthConfig;
 use AmoApiClient\Services\OAuth\OAuthService;
 use AmoCRM\OAuth\OAuthConfigInterface;
@@ -65,6 +69,8 @@ class ConfigProvider
                 OAuthConfigInterface::class => OAuthConfig::class,
                 Dotenv::class => Dotenv::class,
                 GetNamesWithEmailsInterface::class => ContactService::class,
+                GetAllContactsInterface::class => GetAllContactsService::class,
+                FilterWithEmailInterface::class => FilterWithEmailService::class,
             ],
             'factories'  => [
                 MainApiHandler::class => MainApiHandlerFactory::class,

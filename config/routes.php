@@ -38,13 +38,38 @@ use Psr\Container\ContainerInterface;
  */
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
-    $app->get('/auth', \AmoApiClient\Handler\AuthApiHandler::class, 'amo_auth');
-    $app->get('/amo_redirect_uri', \AmoApiClient\Handler\RedirectUriApiHandler::class, 'amo_redirect_uri');
+    $app->get(
+        '/auth',
+        \AmoApiClient\Handler\AuthApiHandler::class,
+        'amo_auth'
+    );
+    $app->get(
+        '/amo_redirect_uri',
+        \AmoApiClient\Handler\RedirectUriApiHandler::class,
+        'amo_redirect_uri'
+    );
 
     //Пути для работы API AmoCRM
-    $app->get('/amo/main', \AmoApiClient\Handler\MainApiHandler::class, 'amo.main');
-    $app->get('/amo/contacts', \AmoApiClient\Handler\ContactsApiHandler::class, 'amo.contacts');
+    $app->get(
+        '/amo/main',
+        \AmoApiClient\Handler\MainApiHandler::class,
+        'amo.main'
+    );
+    $app->get(
+        '/amo/contacts',
+        \AmoApiClient\Handler\ContactsApiHandler::class,
+        'amo.contacts'
+    );
+    $app->get(
+        '/amo/unis/contacts/import',
+        \UnisenderApi\Handler\ImportContactsUnisHandler::class,
+        'amo.unis.contacts.import'
+    );
 
     //Пути для работы API Unisender
-    $app->get('/unis/contact', \UnisenderApi\Handler\GetContactUnisApiHandler::class, 'unis.contact');
+    $app->get(
+        '/unis/contact',
+        \UnisenderApi\Handler\GetContactUnisApiHandler::class,
+        'unis.contact'
+    );
 };

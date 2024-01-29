@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoApiClient\Services\ContactServices;
+namespace AmoApiClient\Services\ContactServices\Interfaces;
 
 use AmoCRM\Collections\ContactsCollection;
 

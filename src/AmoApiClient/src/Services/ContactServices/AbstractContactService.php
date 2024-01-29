@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Services\ContactServices;
 
-use AmoApiClient\Services\ContactServices\GetEmailInterface;
-use AmoApiClient\Services\ContactServices\GetNameInterface;
+use AmoApiClient\Services\ContactServices\Interfaces\GetEmailInterface;
+use AmoApiClient\Services\ContactServices\Interfaces\GetNameInterface;
 use AmoCRM\Models\ContactModel;
 
 /**
