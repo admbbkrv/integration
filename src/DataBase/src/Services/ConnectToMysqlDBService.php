@@ -35,7 +35,7 @@ class ConnectToMysqlDBService implements ConnectToDBInterface
 
         $capsule->bootEloquent();
 
-        //Версия базы данных возвращается для подключения
+        //Версия базы данных возвращается для проверки подключения
         return Capsule::connection()->select("SELECT VERSION() as version");
     }
 }
