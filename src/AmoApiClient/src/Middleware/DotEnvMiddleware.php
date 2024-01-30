@@ -24,7 +24,7 @@ class DotEnvMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
-        $this->dotenv->load(__DIR__ . '/../../../../.env');
+        $this->dotenv->usePutenv()->loadEnv(__DIR__ . '/../../../../.env');
 
         return $handler->handle($request);
     }
