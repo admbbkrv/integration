@@ -31,7 +31,8 @@ class CreateUserHandler implements RequestHandlerInterface
 
         $user = $this->createUser->create(
             $queryParams['email'],
-            $queryParams['password']);
+            $queryParams['password']
+        );
 
         $responce = [
             'user' => [
