@@ -4,12 +4,22 @@ declare(strict_types=1);
 
 namespace DataBase;
 
+use DataBase\Handler\CreateIntegrationHandler;
+use DataBase\Handler\CreateIntegrationHandlerFactory;
 use DataBase\Handler\CreateUserHandler;
 use DataBase\Handler\CreateUserHandlerFactory;
+use DataBase\Handler\SaveIntegrationHandler;
+use DataBase\Handler\SaveIntegrationHandlerFactory;
+use DataBase\Middleware\DoConnectToDBMiddleware;
+use DataBase\Middleware\DoConnectToDBMiddlewareFactory;
 use DataBase\Services\ConnectToMysqlDBService;
 use DataBase\Services\CreateUserService;
+use DataBase\Services\Integration\Create\Interfaces\SaveIntegrationInterface;
+use DataBase\Services\Integration\Create\SaveIntegrationService;
+use DataBase\Services\Integration\Get\GetIntegrationService;
+use DataBase\Services\Integration\Get\Interfaces\GetIntegrationInterface;
 use DataBase\Services\Interfaces\ConnectToDBInterface;
-use DataBase\Services\Interfaces\CreateUserInterface;
+use DataBase\Services\Interfaces\User\CreateUserInterface;
 
 /**
  * The configuration provider for the DataBase module
@@ -41,9 +51,16 @@ class ConfigProvider
             'invokables' => [
                 ConnectToDBInterface::class => ConnectToMysqlDBService::class,
                 CreateUserInterface::class => CreateUserService::class,
+                //Integration
+                SaveIntegrationInterface::class => SaveIntegrationService::class,
+                GetIntegrationInterface::class => GetIntegrationService::class,
             ],
             'factories'  => [
                 CreateUserHandler::class => CreateUserHandlerFactory::class,
+                DoConnectToDBMiddleware::class => DoConnectToDBMiddlewareFactory::class,
+                //Integration
+                CreateIntegrationHandler::class => CreateIntegrationHandlerFactory::class,
+                SaveIntegrationHandler::class => SaveIntegrationHandlerFactory::class,
             ],
         ];
     }
