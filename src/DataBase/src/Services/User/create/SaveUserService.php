@@ -1,6 +1,6 @@
 <?php
 
-namespace DataBase\Services\User;
+namespace DataBase\Services\User\create;
 
 use DataBase\Models\User;
 use DataBase\Services\User\create\Interfaces\SaveUserInterface;

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace DataBase\Services\Interfaces\User;
+namespace DataBase\Services\User\create\Interfaces;
 
 use DataBase\Models\User;
 
 /**
  * Интерфейс создания пользователя в базе данных
  */
-interface CreateUserInterface
+interface SaveUserInterface
 {
     /**
-     * Метод создания пользователя в бд
+     * Сохранение user в БД
      * @param int $account_id
      * @return User
      */
-    public function create(int $account_id): User;
+    public function save(int $account_id): User;
 }
