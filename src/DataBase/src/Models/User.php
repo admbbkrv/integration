@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace DataBase\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Модель таблицы users
@@ -13,12 +15,10 @@ class User extends Model
 {
     /**
      * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = [
-        'user_email',
-        'user_password',
+        'account_id',
     ];
 
     /**
@@ -27,4 +27,29 @@ class User extends Model
      */
     protected $table = 'users';
 
+    /**
+     * Get the api token associated with the user.
+     * @return HasOne
+     */
+    public function apiToken(): HasOne
+    {
+        return $this->hasOne(
+            ApiToken::class,
+            'user_id',
+            'id'
+        );
+    }
+
+    /**
+     * The integrations that belong to the user.
+     */
+    public function integrations(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Integration::class,
+            'integration_user',
+            'user_id',
+            'integration_id',
+        );
+    }
 }
