@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Schema\Blueprint;
 use Phpmig\Migration\Migration;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -11,19 +13,20 @@ class CreateUsersTable extends Migration
 {
     /**
      * Do the migration
+     * @return void
      */
     public function up(): void
     {
         Capsule::schema()->create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('user_email');
-            $table->string('user_password');
+            $table->integer('account_id');
             $table->timestampsTz();
         });
     }
 
     /**
      * Undo the migration
+     * @return void
      */
     public function down(): void
     {
