@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Handler;
 
+use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
+use DataBase\Services\Integration\Get\Interfaces\GetIntegrationInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class AuthApiHandlerFactory extends AbstractApiHandlerFactory
+/**
+ * Фабрика генерации AuthApiHandler обработчика
+ */
+class AuthApiHandlerFactory
 {
     /**
      * @throws ContainerExceptionInterface
@@ -16,6 +21,9 @@ class AuthApiHandlerFactory extends AbstractApiHandlerFactory
      */
     public function __invoke(ContainerInterface $container): AuthApiHandler
     {
-        return new AuthApiHandler($this->getApiClient($container));
+        return new AuthApiHandler(
+            $container->get(GetIntegrationInterface::class),
+            $container->get(GetAmoCRMApiClientInterface::class)
+        );
     }
 }

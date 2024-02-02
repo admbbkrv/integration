@@ -4,39 +4,49 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Handler;
 
-use AmoCRM\Client\AmoCRMApiClient;
+use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
+use DataBase\Services\Integration\Get\Interfaces\GetIntegrationInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Random\RandomException;
 
 /**
  * Класс обработчка, который отвественен за страницу авторизации API AmoCRN /auth
  */
 class AuthApiHandler implements RequestHandlerInterface
 {
-    /**
-     * Объект API клиента
-     * @var AmoCRMApiClient
-     */
-    private AmoCRMApiClient $apiClient;
+    private GetIntegrationInterface $getIntegration;
+    private GetAmoCRMApiClientInterface $getAmoCRMApiClient;
 
-    public function __construct(AmoCRMApiClient $apiClient)
-    {
-        $this->apiClient = $apiClient;
+    public function __construct(
+        GetIntegrationInterface $getIntegration,
+        GetAmoCRMApiClientInterface $getAmoCRMApiClient
+    ) {
+        $this->getIntegration = $getIntegration;
+        $this->getAmoCRMApiClient = $getAmoCRMApiClient;
     }
 
-    public function handle(ServerRequestInterface $request) : ResponseInterface
-    {
+    public function handle(
+        ServerRequestInterface $request
+    ): ResponseInterface {
+
         if (!session_status()) {
             session_start();
         }
 
-        $state = bin2hex(random_bytes(16));
-        $_SESSION['oauth2state'] = $state;
+        $integration_id = $request->getQueryParams()['integration_id'];
 
-        $authorizationUrl = $this->apiClient->getOAuthClient()->getAuthorizeUrl([
+        $state = bin2hex(random_bytes(16));
+
+        $_SESSION['oauth2list'] = [
+            $state => $integration_id
+        ];
+
+        $apiClient = $this->getAmoCRMApiClient
+            ->getAmoClient((int) $integration_id);
+
+        $authorizationUrl = $apiClient->getOAuthClient()->getAuthorizeUrl([
             'state' => $state,
             'mode' => 'post_message',
         ]);
