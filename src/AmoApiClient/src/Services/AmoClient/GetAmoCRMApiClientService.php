@@ -6,25 +6,38 @@ namespace AmoApiClient\Services\AmoClient;
 
 use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
 use AmoCRM\Client\AmoCRMApiClient;
+use DataBase\Services\Integration\Get\GetIntegrationService;
+use Exception;
 
 /**
  * Сервис дял получения
  * экземпляра AmoCRMApiClient класса
  */
-class GetAmoCRMApiClientService implements GetAmoCRMApiClientInterface
+class GetAmoCRMApiClientService extends GetIntegrationService implements
+    GetAmoCRMApiClientInterface
 {
     /**
      * @inheritDoc
      */
-    public function get(
-        string $clientId,
-        string $clientSecret,
-        string $redirectUri
+    public function getAmoClient(
+        int $integrationId
     ): AmoCRMApiClient {
+
+        $integration = $this->get(
+            'id',
+            $integrationId
+        );
+
+        if ($integration === null) {
+            throw new Exception(
+                'Интеграции с таким ID не существует'
+            );
+        }
+
         return new AmoCRMApiClient(
-            $clientId,
-            $clientSecret,
-            $redirectUri
+            $integration->client_id,
+            $integration->client_secret,
+            $integration->redirect_uri,
         );
     }
 }

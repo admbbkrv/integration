@@ -14,14 +14,10 @@ interface GetAmoCRMApiClientInterface
 {
     /**
      * Возвращает объект AmoCRMApiClient класса
-     * @param string $clientId
-     * @param string $clientSecret
-     * @param string $redirectUri
+     * @param int $integrationId
      * @return AmoCRMApiClient
      */
-    public function get(
-        string $clientId,
-        string $clientSecret,
-        string $redirectUri
+    public function getAmoClient(
+        int $integrationId
     ): AmoCRMApiClient;
 }
