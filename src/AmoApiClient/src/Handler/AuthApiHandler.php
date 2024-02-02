@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
-use DataBase\Services\Integration\Get\Interfaces\GetIntegrationInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,14 +15,11 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class AuthApiHandler implements RequestHandlerInterface
 {
-    private GetIntegrationInterface $getIntegration;
     private GetAmoCRMApiClientInterface $getAmoCRMApiClient;
 
     public function __construct(
-        GetIntegrationInterface $getIntegration,
         GetAmoCRMApiClientInterface $getAmoCRMApiClient
     ) {
-        $this->getIntegration = $getIntegration;
         $this->getAmoCRMApiClient = $getAmoCRMApiClient;
     }
 
