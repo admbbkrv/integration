@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace AmoApiClient\Middleware;
 
 use DataBase\Services\ApiToken\get\Interfaces\GetAccessTokenInterface;
-use Laminas\Diactoros\Response\RedirectResponse;
-use Mezzio\Router\RouterInterface;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -21,17 +20,11 @@ class ApiAmoAuthMiddleware implements MiddlewareInterface
      * @var GetAccessTokenInterface
      */
     private GetAccessTokenInterface $getAccessToken;
-    /**
-     * @var RouterInterface
-     */
-    private RouterInterface $router;
 
     public function __construct(
         GetAccessTokenInterface $getAccessToken,
-        RouterInterface $router
     ) {
         $this->getAccessToken = $getAccessToken;
-        $this->router = $router;
     }
 
     public function process(
@@ -39,17 +32,35 @@ class ApiAmoAuthMiddleware implements MiddlewareInterface
         RequestHandlerInterface $handler
     ) : ResponseInterface {
 
+        $queryParams = $request->getQueryParams();
+
+        if (!$queryParams['integration_id']) {
+            $message = 'You have not passed the integration_id';
+            $response = [
+                'Error' => [
+                    'Message' => $message
+                ],
+            ];
+
+            return new JsonResponse($response);
+        }
+
         $postParams = $request->getParsedBody();
         $baseDomain = $postParams['subdomain'] . '.amocrm.ru';
         $accessToken = $this->getAccessToken->getAccessToken($baseDomain);
 
         if ($accessToken === null) {
-            $paramsForUri = '?' . $request->getUri()->getQuery();
+            $integrationData = 'integration_id=' . $queryParams['integration_id'];
+            $message = 'You dont have ApiToken for authorization integration('
+                . $integrationData
+                . '). Complete the initial authorization';
+            $response = [
+                'Error' => [
+                    'Message' => $message
+                ],
+            ];
 
-            $authorizationUrl = $this->router
-                ->generateUri('amo_auth') . $paramsForUri;
-
-            return new RedirectResponse($authorizationUrl);
+            return new JsonResponse($response);
         }
 
         return $handler->handle($request);

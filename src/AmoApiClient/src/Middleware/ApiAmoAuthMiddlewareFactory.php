@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AmoApiClient\Middleware;
 
 use DataBase\Services\ApiToken\get\Interfaces\GetAccessTokenInterface;
-use Mezzio\Router\RouterInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -25,7 +24,6 @@ class ApiAmoAuthMiddlewareFactory
     {
         return new ApiAmoAuthMiddleware(
             $container->get(GetAccessTokenInterface::class),
-            $container->get(RouterInterface::class)
         );
     }
 }
