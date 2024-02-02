@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
-use DataBase\Services\ApiToken\Interfaces\SaveApiTokenInterface;
+use DataBase\Services\ApiToken\create\Interfaces\SaveApiTokenInterface;
 use DataBase\Services\Integration\Get\Interfaces\GetIntegrationInterface;
 use DataBase\Services\User\create\Interfaces\SaveUserInterface;
 use Psr\Container\ContainerInterface;

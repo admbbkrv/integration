@@ -6,7 +6,7 @@ namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
-use DataBase\Services\ApiToken\Interfaces\SaveApiTokenInterface;
+use DataBase\Services\ApiToken\create\Interfaces\SaveApiTokenInterface;
 use DataBase\Services\Integration\Get\Interfaces\GetIntegrationInterface;
 use DataBase\Services\User\create\Interfaces\SaveUserInterface;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -57,7 +57,7 @@ class AmoRedirectUriApiHandler implements RequestHandlerInterface
         try {
 
             $queryParams = $request->getQueryParams();
-
+            /** Сохранения AccessToken после установки интеграции */
             if ($queryParams['from_widget']) {
 
                 $integration = $this->getIntegration->get(
@@ -71,11 +71,8 @@ class AmoRedirectUriApiHandler implements RequestHandlerInterface
                     );
                 }
 
-                $apiClient = $this->getAmoCRMApiClient->get(
-                    $integration->client_id,
-                    $integration->client_secret,
-                    $integration->redirect_uri,
-                );
+                $apiClient = $this->getAmoCRMApiClient
+                    ->getAmoClient($integration->id);
 
                 $apiClient->setAccountBaseDomain($queryParams['referer']);
 
@@ -99,6 +96,41 @@ class AmoRedirectUriApiHandler implements RequestHandlerInterface
 
                 return new JsonResponse($resourceOwner->toArray());
             }
+
+            /** Сохранение AccessToken при ручной авторизации */
+            if (array_key_exists($queryParams['state'], $_SESSION['oauth2list'])) {
+                $integrationId = $_SESSION['oauth2list']['state'];
+
+                $apiClient = $this->getAmoCRMApiClient
+                    ->getAmoClient($integrationId);
+
+                $apiClient->setAccountBaseDomain($queryParams['referer']);
+
+                $accessToken = $apiClient->getOAuthClient()
+                    ->getAccessTokenByCode($queryParams['code']);
+
+                $resourceOwner = $apiClient->getOAuthClient()
+                    ->getResourceOwner($accessToken);
+
+                $user = $this->saveUser->save($resourceOwner->getId());
+
+                $user->integrations()->attach($integrationId);
+
+                $apiToken = $this->saveApiToken->save(
+                    $accessToken->getToken(),
+                    $accessToken->getExpires(),
+                    $accessToken->getRefreshToken(),
+                    $queryParams['referer'],
+                    $user->id
+                );
+
+                return new JsonResponse($resourceOwner->toArray());
+
+            }
+
+            throw new AmoCRMoAuthApiException(
+                'Не хватает данных для сохранения AccessToken.'
+            );
         } catch (AmoCRMoAuthApiException $ex) {
 
             $responce = [
