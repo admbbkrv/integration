@@ -37,16 +37,32 @@ use Psr\Container\ContainerInterface;
  * );
  */
 
-return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
+return static function (
+    Application $app,
+    MiddlewareFactory $factory,
+    ContainerInterface $container
+): void {
     $app->get(
-        '/auth',
-        \AmoApiClient\Handler\AuthApiHandler::class,
-        'amo_auth'
+        '/api/auth',
+        \AmoApiClient\Handler\AuthApiTemlateHandler::class,
+        'api.auth'
     );
+    $app->post(
+        '/api/auth/get_auth_uri',
+        \AmoApiClient\Handler\AuthApiHandler::class,
+        'api.auth.get_auth_uri'
+    );
+
+    // Пути для получения и сохранения токенов
     $app->get(
-        '/amo_redirect_uri',
-        \AmoApiClient\Handler\RedirectUriApiHandler::class,
-        'amo_redirect_uri'
+        '/api/save_token/amo_token',
+        \AmoApiClient\Handler\AmoRedirectUriApiHandler::class,
+        'api.save_token.amo_token'
+    );
+    $app->post(
+        '/api/save_token/unis_token',
+        \DataBase\Handler\SaveApiKeyHandler::class,
+        'amo.save_token.unis_token'
     );
 
     //Пути для работы API AmoCRM
@@ -79,4 +95,16 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         \DataBase\Handler\CreateUserHandler::class,
         'db.user.create'
     );
+    $app->get(
+        '/db/integration/create',
+        \DataBase\Handler\CreateIntegrationHandler::class,
+        'db.integration.create'
+    );
+    $app->post(
+        '/db/integration/save',
+        \DataBase\Handler\SaveIntegrationHandler::class,
+        'db.integration.save'
+    );
+
+    //пути отображения форм
 };
