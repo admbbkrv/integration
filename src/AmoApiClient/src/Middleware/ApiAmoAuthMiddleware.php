@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Middleware;
 
+use DataBase\Services\ApiToken\get\Interfaces\GetAccessTokenInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
-use League\OAuth2\Client\Token\AccessTokenInterface;
 use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,22 +17,37 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class ApiAmoAuthMiddleware implements MiddlewareInterface
 {
-    private ?AccessTokenInterface $accessToken;
+    /**
+     * @var GetAccessTokenInterface
+     */
+    private GetAccessTokenInterface $getAccessToken;
+    /**
+     * @var RouterInterface
+     */
     private RouterInterface $router;
 
     public function __construct(
-        ?AccessTokenInterface $accessToken,
+        GetAccessTokenInterface $getAccessToken,
         RouterInterface $router
     ) {
-        $this->accessToken = $accessToken;
+        $this->getAccessToken = $getAccessToken;
         $this->router = $router;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
-    {
-        if ($this->accessToken === null) {
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ) : ResponseInterface {
 
-            $authorizationUrl = $this->router->generateUri('amo_auth');
+        $postParams = $request->getParsedBody();
+        $baseDomain = $postParams['subdomain'] . '.amocrm.ru';
+        $accessToken = $this->getAccessToken->getAccessToken($baseDomain);
+
+        if ($accessToken === null) {
+            $paramsForUri = '?' . $request->getUri()->getQuery();
+
+            $authorizationUrl = $this->router
+                ->generateUri('amo_auth') . $paramsForUri;
 
             return new RedirectResponse($authorizationUrl);
         }
