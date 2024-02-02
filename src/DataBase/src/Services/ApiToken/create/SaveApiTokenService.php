@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace DataBase\Services\ApiToken;
+namespace DataBase\Services\ApiToken\create;
 
 use DataBase\Models\ApiToken;
-use DataBase\Services\ApiToken\Interfaces\SaveApiTokenInterface;
+use DataBase\Services\ApiToken\create\Interfaces\SaveApiTokenInterface;
 
 /**
  * Сервис сохранения данных токенов в БД

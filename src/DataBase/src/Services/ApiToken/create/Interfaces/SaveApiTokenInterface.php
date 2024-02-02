@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DataBase\Services\ApiToken\Interfaces;
+namespace DataBase\Services\ApiToken\create\Interfaces;
 
 use DataBase\Models\ApiToken;
 
