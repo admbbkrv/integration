@@ -12,21 +12,13 @@ use DataBase\Models\ApiToken;
 interface SaveApiTokenInterface
 {
     /**
-     * Сохранение ApiToken в БД
-     * @param string $accessToken
-     * @param int $expires
-     * @param string $refreshToken
-     * @param string $baseDomain
-     * @param int|null $userId
-     * @param string|null $apiKey
-     * @return mixed
+     * Создание записи в api_tokens table
+     * @param int $userId
+     * @param array $values
+     * @return ApiToken
      */
     public function save(
-        string $accessToken,
-        int $expires,
-        string $refreshToken,
-        string $baseDomain,
-        ?int $userId = null,
-        ?string $apiKey = null
+        int $userId,
+        array $values
     ): ApiToken;
 }

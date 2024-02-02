@@ -6,6 +6,7 @@ namespace DataBase\Services\ApiToken\create;
 
 use DataBase\Models\ApiToken;
 use DataBase\Services\ApiToken\create\Interfaces\SaveApiTokenInterface;
+use Exception;
 
 /**
  * Сервис сохранения данных токенов в БД
@@ -16,33 +17,25 @@ class SaveApiTokenService implements SaveApiTokenInterface
      * @inheritDoc
      */
     public function save(
-        string $accessToken,
-        int $expires,
-        string $refreshToken,
-        string $baseDomain,
-        ?int $userId = null,
-        ?string $apiKey = null
+        int $userId,
+        array $values
     ): ApiToken {
-        $values = [
-            'access_token' => $accessToken,
-            'expires' => $expires,
-            'refresh_token' => $refreshToken,
-            'base_domain' => $baseDomain,
-        ];
 
-        if ($userId !== null) {
-            $values['user_id'] = $userId;
+        if (
+            (
+                isset($values['access_token'])
+                && isset($values['expires'])
+                && isset($values['refresh_token'])
+                && isset($values['base_domain'])
+            )
+            || isset($values['api_key'])
+        ) {
+            return ApiToken::query()->updateOrCreate(
+                ['user_id' => $userId,],
+                $values,
+            );
         }
 
-        if ($apiKey !== null) {
-            $values['api_key'] = $apiKey;
-        }
-
-        return ApiToken::query()->updateOrCreate(
-            [
-                'base_domain' => $baseDomain,
-            ],
-            $values,
-        );
+        throw new Exception('Access Token or Api Key data has not been passed');
     }
 }

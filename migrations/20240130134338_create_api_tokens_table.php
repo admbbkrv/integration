@@ -21,15 +21,14 @@ class CreateApiTokensTable extends Migration
             $table->id();
             //внешний ключ связанный с таблицей users
             $table->foreignId('user_id')
-                ->nullable()
                 ->constrained()
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->text('access_token');
-            $table->integer('expires');
-            $table->text('refresh_token');
+            $table->text('access_token')->nullable();
+            $table->integer('expires')->nullable();
+            $table->text('refresh_token')->nullable();
             $table->string('base_domain')->nullable();
             $table->text('api_key')->nullable();
             $table->timestampsTz();

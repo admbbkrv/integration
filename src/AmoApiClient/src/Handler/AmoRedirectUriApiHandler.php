@@ -6,7 +6,7 @@ namespace AmoApiClient\Handler;
 
 use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
-use DataBase\Services\ApiToken\create\Interfaces\SaveApiTokenInterface;
+use DataBase\Services\ApiToken\create\Interfaces\SaveAccessTokenInterface;
 use DataBase\Services\Integration\Get\Interfaces\GetIntegrationInterface;
 use DataBase\Services\User\create\Interfaces\SaveUserInterface;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -34,20 +34,21 @@ class AmoRedirectUriApiHandler implements RequestHandlerInterface
      */
     private SaveUserInterface $saveUser;
     /**
-     * @var SaveApiTokenInterface
+     * @var SaveAccessTokenInterface
      */
-    private SaveApiTokenInterface $saveApiToken;
+    private SaveAccessTokenInterface $saveAccessToken;
+
 
     public function __construct(
         GetIntegrationInterface $getIntegration,
         GetAmoCRMApiClientInterface $getAmoCRMApiClient,
         SaveUserInterface $saveUser,
-        SaveApiTokenInterface $saveApiToken
+        SaveAccessTokenInterface $saveAccessToken
     ) {
         $this->getIntegration = $getIntegration;
         $this->getAmoCRMApiClient = $getAmoCRMApiClient;
         $this->saveUser = $saveUser;
-        $this->saveApiToken = $saveApiToken;
+        $this->saveAccessToken = $saveAccessToken;
     }
 
     public function handle(
@@ -79,14 +80,16 @@ class AmoRedirectUriApiHandler implements RequestHandlerInterface
                 $accessToken = $apiClient->getOAuthClient()
                     ->getAccessTokenByCode($queryParams['code']);
 
-                $resourceOwner = $apiClient->getOAuthClient()
-                    ->getResourceOwner($accessToken);
+                $accountDomain = $apiClient->getOAuthClient()
+                    ->getAccountDomain($accessToken);
 
-                $user = $this->saveUser->save($resourceOwner->getId());
+                $user = $this->saveUser->save($accountDomain->getId());
 
-                $user->integrations()->attach($integration->id);
+                $user->integrations()->syncWithoutDetaching(
+                    [$integration->id]
+                );
 
-                $apiToken = $this->saveApiToken->save(
+                $apiToken = $this->saveAccessToken->saveAccessToken(
                     $accessToken->getToken(),
                     $accessToken->getExpires(),
                     $accessToken->getRefreshToken(),
@@ -94,7 +97,7 @@ class AmoRedirectUriApiHandler implements RequestHandlerInterface
                     $user->id
                 );
 
-                return new JsonResponse($resourceOwner->toArray());
+                return new JsonResponse($accountDomain->toArray());
             }
 
             /** Сохранение AccessToken при ручной авторизации */
@@ -109,14 +112,14 @@ class AmoRedirectUriApiHandler implements RequestHandlerInterface
                 $accessToken = $apiClient->getOAuthClient()
                     ->getAccessTokenByCode($queryParams['code']);
 
-                $resourceOwner = $apiClient->getOAuthClient()
-                    ->getResourceOwner($accessToken);
+                $accountDomain = $apiClient->getOAuthClient()
+                    ->getAccountDomain($accessToken);
 
-                $user = $this->saveUser->save($resourceOwner->getId());
+                $user = $this->saveUser->save($accountDomain->getId());
 
                 $user->integrations()->attach($integrationId);
 
-                $apiToken = $this->saveApiToken->save(
+                $apiToken = $this->saveAccessToken->saveAccessToken(
                     $accessToken->getToken(),
                     $accessToken->getExpires(),
                     $accessToken->getRefreshToken(),
@@ -124,7 +127,7 @@ class AmoRedirectUriApiHandler implements RequestHandlerInterface
                     $user->id
                 );
 
-                return new JsonResponse($resourceOwner->toArray());
+                return new JsonResponse($accountDomain->toArray());
 
             }
 
