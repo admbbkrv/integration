@@ -71,10 +71,8 @@ class AmoRedirectUriApiHandler implements RequestHandlerInterface
                         'client_id неверный или незарегистри́рованный'
                     );
                 }
-
                 $apiClient = $this->getAmoCRMApiClient
                     ->getAmoClient($integration->id);
-
                 $apiClient->setAccountBaseDomain($queryParams['referer']);
 
                 $accessToken = $apiClient->getOAuthClient()

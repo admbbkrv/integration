@@ -22,7 +22,7 @@ class ApiAmoAuthMiddleware implements MiddlewareInterface
     private GetAccessTokenInterface $getAccessToken;
 
     public function __construct(
-        GetAccessTokenInterface $getAccessToken,
+        GetAccessTokenInterface $getAccessToken
     ) {
         $this->getAccessToken = $getAccessToken;
     }
@@ -46,7 +46,7 @@ class ApiAmoAuthMiddleware implements MiddlewareInterface
         }
 
         $postParams = $request->getParsedBody();
-        $baseDomain = $postParams['subdomain'] . '.amocrm.ru';
+        $baseDomain = $postParams['account']['subdomain'] . '.amocrm.ru';
         $accessToken = $this->getAccessToken->getAccessToken($baseDomain);
 
         if ($accessToken === null) {

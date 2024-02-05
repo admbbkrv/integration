@@ -15,6 +15,8 @@ use AmoApiClient\Handler\ContactsApiHandler;
 use AmoApiClient\Handler\ContactsApiHandlerFactory;
 use AmoApiClient\Handler\MainApiHandler;
 use AmoApiClient\Handler\MainApiHandlerFactory;
+use AmoApiClient\Handler\UnisWebhookHandler;
+use AmoApiClient\Handler\UnisWebhookHandlerFactory;
 use AmoApiClient\Middleware\ApiAmoAuthMiddleware;
 use AmoApiClient\Middleware\ApiAmoAuthMiddlewareFactory;
 use AmoApiClient\Middleware\DotEnvMiddleware;
@@ -27,6 +29,8 @@ use AmoApiClient\Services\AccessTokenService\SaveTokenInterface;
 use AmoApiClient\Services\AccessTokenService\SaveTokenService;
 use AmoApiClient\Services\AmoClient\GetAmoCRMApiClientService;
 use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
+use AmoApiClient\Services\AmoClient\Webhooks\GenerateWebhookModelService;
+use AmoApiClient\Services\AmoClient\Webhooks\Interfaces\GenerateWebhookModelInterface;
 use AmoApiClient\Services\ContactServices\ContactService;
 use AmoApiClient\Services\ContactServices\FilterWithEmailService;
 use AmoApiClient\Services\ContactServices\GetAllContactsService;
@@ -78,6 +82,7 @@ class ConfigProvider
                 GetAllContactsInterface::class => GetAllContactsService::class,
                 FilterWithEmailInterface::class => FilterWithEmailService::class,
                 GetAmoCRMApiClientInterface::class => GetAmoCRMApiClientService::class,
+                GenerateWebhookModelInterface::class => GenerateWebhookModelService::class,
             ],
             'factories'  => [
                 MainApiHandler::class => MainApiHandlerFactory::class,
@@ -89,6 +94,7 @@ class ConfigProvider
                 DotEnvMiddleware::class => DotEnvMiddlewareFactory::class,
                 SaveIntegrationHandler::class => SaveIntegrationHandlerFactory::class,
                 AuthApiTemlateHandler::class => AuthApiTemlateHandlerFactory::class,
+                UnisWebhookHandler::class => UnisWebhookHandlerFactory::class,
             ],
         ];
     }
