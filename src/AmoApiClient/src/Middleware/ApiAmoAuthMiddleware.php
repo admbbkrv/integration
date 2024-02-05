@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace AmoApiClient\Middleware;
 
-use Laminas\Diactoros\Response\RedirectResponse;
-use League\OAuth2\Client\Token\AccessTokenInterface;
-use Mezzio\Router\RouterInterface;
+use DataBase\Services\ApiToken\get\Interfaces\GetAccessTokenInterface;
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,24 +16,51 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class ApiAmoAuthMiddleware implements MiddlewareInterface
 {
-    private ?AccessTokenInterface $accessToken;
-    private RouterInterface $router;
+    /**
+     * @var GetAccessTokenInterface
+     */
+    private GetAccessTokenInterface $getAccessToken;
 
     public function __construct(
-        ?AccessTokenInterface $accessToken,
-        RouterInterface $router
+        GetAccessTokenInterface $getAccessToken,
     ) {
-        $this->accessToken = $accessToken;
-        $this->router = $router;
+        $this->getAccessToken = $getAccessToken;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
-    {
-        if ($this->accessToken === null) {
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ) : ResponseInterface {
 
-            $authorizationUrl = $this->router->generateUri('amo_auth');
+        $queryParams = $request->getQueryParams();
 
-            return new RedirectResponse($authorizationUrl);
+        if (!$queryParams['integration_id']) {
+            $message = 'You have not passed the integration_id';
+            $response = [
+                'Error' => [
+                    'Message' => $message
+                ],
+            ];
+
+            return new JsonResponse($response);
+        }
+
+        $postParams = $request->getParsedBody();
+        $baseDomain = $postParams['subdomain'] . '.amocrm.ru';
+        $accessToken = $this->getAccessToken->getAccessToken($baseDomain);
+
+        if ($accessToken === null) {
+            $integrationData = 'integration_id=' . $queryParams['integration_id'];
+            $message = 'You dont have ApiToken for authorization integration('
+                . $integrationData
+                . '). Complete the initial authorization';
+            $response = [
+                'Error' => [
+                    'Message' => $message
+                ],
+            ];
+
+            return new JsonResponse($response);
         }
 
         return $handler->handle($request);

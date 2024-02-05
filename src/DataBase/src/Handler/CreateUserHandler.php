@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DataBase\Handler;
 
-use DataBase\Services\Interfaces\CreateUserInterface;
+use DataBase\Services\User\create\Interfaces\SaveUserInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,11 +16,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CreateUserHandler implements RequestHandlerInterface
 {
     /**
-     * @var CreateUserInterface
+     * @var SaveUserInterface
      */
-    private CreateUserInterface $createUser;
+    private SaveUserInterface $createUser;
 
-    public function __construct(CreateUserInterface $createUser)
+    public function __construct(SaveUserInterface $createUser)
     {
         $this->createUser = $createUser;
     }
@@ -29,7 +29,7 @@ class CreateUserHandler implements RequestHandlerInterface
     {
         $queryParams = $request->getQueryParams();
 
-        $user = $this->createUser->create(
+        $user = $this->createUser->save(
             $queryParams['email'],
             $queryParams['password']
         );

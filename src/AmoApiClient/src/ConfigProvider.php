@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace AmoApiClient;
 
 
+use AmoApiClient\Handler\AmoRedirectUriApiHandler;
+use AmoApiClient\Handler\AmoRedirectUriApiHandlerFactory;
 use AmoApiClient\Handler\AuthApiHandler;
 use AmoApiClient\Handler\AuthApiHandlerFactory;
+use AmoApiClient\Handler\AuthApiTemlateHandler;
+use AmoApiClient\Handler\AuthApiTemlateHandlerFactory;
 use AmoApiClient\Handler\ContactsApiHandler;
 use AmoApiClient\Handler\ContactsApiHandlerFactory;
 use AmoApiClient\Handler\MainApiHandler;
 use AmoApiClient\Handler\MainApiHandlerFactory;
-use AmoApiClient\Handler\RedirectUriApiHandler;
-use AmoApiClient\Handler\RedirectUriApiHandlerFactory;
 use AmoApiClient\Middleware\ApiAmoAuthMiddleware;
 use AmoApiClient\Middleware\ApiAmoAuthMiddlewareFactory;
 use AmoApiClient\Middleware\DotEnvMiddleware;
@@ -23,6 +25,8 @@ use AmoApiClient\Services\AccessTokenService\GetTokenInterface;
 use AmoApiClient\Services\AccessTokenService\GetTokenService;
 use AmoApiClient\Services\AccessTokenService\SaveTokenInterface;
 use AmoApiClient\Services\AccessTokenService\SaveTokenService;
+use AmoApiClient\Services\AmoClient\GetAmoCRMApiClientService;
+use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
 use AmoApiClient\Services\ContactServices\ContactService;
 use AmoApiClient\Services\ContactServices\FilterWithEmailService;
 use AmoApiClient\Services\ContactServices\GetAllContactsService;
@@ -33,6 +37,8 @@ use AmoApiClient\Services\OAuth\OAuthConfig;
 use AmoApiClient\Services\OAuth\OAuthService;
 use AmoCRM\OAuth\OAuthConfigInterface;
 use AmoCRM\OAuth\OAuthServiceInterface;
+use DataBase\Handler\SaveIntegrationHandler;
+use DataBase\Handler\SaveIntegrationHandlerFactory;
 use Symfony\Component\Dotenv\Dotenv;
 
 /**
@@ -71,6 +77,7 @@ class ConfigProvider
                 GetNamesWithEmailsInterface::class => ContactService::class,
                 GetAllContactsInterface::class => GetAllContactsService::class,
                 FilterWithEmailInterface::class => FilterWithEmailService::class,
+                GetAmoCRMApiClientInterface::class => GetAmoCRMApiClientService::class,
             ],
             'factories'  => [
                 MainApiHandler::class => MainApiHandlerFactory::class,
@@ -78,8 +85,10 @@ class ConfigProvider
                 AccessTokenService::class => AccessTokenServiceFactory::class,
                 ApiAmoAuthMiddleware::class => ApiAmoAuthMiddlewareFactory::class,
                 AuthApiHandler::class => AuthApiHandlerFactory::class,
-                RedirectUriApiHandler::class => RedirectUriApiHandlerFactory::class,
+                AmoRedirectUriApiHandler::class => AmoRedirectUriApiHandlerFactory::class,
                 DotEnvMiddleware::class => DotEnvMiddlewareFactory::class,
+                SaveIntegrationHandler::class => SaveIntegrationHandlerFactory::class,
+                AuthApiTemlateHandler::class => AuthApiTemlateHandlerFactory::class,
             ],
         ];
     }

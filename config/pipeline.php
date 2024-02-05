@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use AmoApiClient\Middleware\ApiAmoAuthMiddleware;
 use AmoApiClient\Middleware\DotEnvMiddleware;
+use DataBase\Middleware\DoConnectToDBMiddleware;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use Mezzio\Application;
 use Mezzio\Handler\NotFoundHandler;
@@ -72,7 +73,9 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     //Подгрузка переменных окружения
     $app->pipe(DotEnvMiddleware::class);
     //Проверка на наличение токена
-    $app->pipe('/amo', ApiAmoAuthMiddleware::class);
+    $app->pipe('/api', DoConnectToDBMiddleware::class);
+    $app->pipe('/db', DoConnectToDBMiddleware::class);
+    $app->pipe('/api/amo', ApiAmoAuthMiddleware::class);
 
     // Register the dispatch middleware in the middleware pipeline
     $app->pipe(DispatchMiddleware::class);

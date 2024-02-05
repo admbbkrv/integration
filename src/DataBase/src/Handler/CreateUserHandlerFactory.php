@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DataBase\Handler;
 
 use DataBase\Services\Interfaces\ConnectToDBInterface;
-use DataBase\Services\Interfaces\CreateUserInterface;
+use DataBase\Services\User\create\Interfaces\SaveUserInterface;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -20,7 +20,7 @@ class CreateUserHandlerFactory
         $connectToDBService->connect($configDB);
 
         return new CreateUserHandler(
-            $container->get(CreateUserInterface::class)
+            $container->get(SaveUserInterface::class)
         );
     }
 }
