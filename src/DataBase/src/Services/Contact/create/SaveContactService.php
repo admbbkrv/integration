@@ -14,14 +14,17 @@ class SaveContactService implements SaveContactInterface
      * @inheritDoc
      */
     public function save(
-        int $contactId
+        int $contactId,
+        int $userId
     ): Contact {
         return Contact::query()->firstOrCreate(
             [
                 'contact_id' => $contactId,
+                'user_id' => $userId,
             ],
             [
                 'contact_id' => $contactId,
+                'user_id' => $userId,
             ],
         );
     }

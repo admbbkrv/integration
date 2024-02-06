@@ -14,9 +14,11 @@ interface SaveContactInterface
     /**
      * Создание Contact в contacts table
      * @param int $contactId
+     * @param int $userId
      * @return Contact
      */
     public function save(
-        int $contactId
+        int $contactId,
+        int $userId
     ): Contact;
 }
