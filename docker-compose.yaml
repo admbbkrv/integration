@@ -1,7 +1,5 @@
 version: '3.5'
- 
- 
-# приближенный к продакшену конфиг
+
 services:
     # PHP fpm
     application-backend:
@@ -14,7 +12,7 @@ services:
         volumes:
             - .:/var/www/application
         container_name: application-backend
-         
+
     # Nginx Service
     application-nginx:
         image: nginx:alpine
@@ -30,7 +28,7 @@ services:
         ports:
             - "8080:80"
             - "443:443"
-             
+
     # MySQL Service
     application-mysql:
         image: library/mysql:8.0
@@ -48,7 +46,14 @@ services:
         volumes:
             - applicationMysqlData:/var/lib/mysql
             - applicationMysqlFiles:/var/lib/mysql-files
-         
+
+    # Queue Service
+    application-beanstalkd:
+        image: schickling/beanstalkd:latest
+        container_name: application-beanstalkd
+        ports:
+            - "11300:11300"
+
 #Docker Volumes
 volumes:
     applicationMysqlData:
