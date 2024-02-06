@@ -8,8 +8,10 @@ use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
 use AmoApiClient\Services\AmoClient\Webhooks\Interfaces\GenerateWebhookModelInterface;
 use AmoApiClient\Services\ContactServices\Interfaces\FilterWithEmailInterface;
 use AmoApiClient\Services\ContactServices\Interfaces\GetAllContactsInterface;
+use DataBase\Models\Contact;
 use DataBase\Services\ApiToken\create\Interfaces\SaveApiKeyInterface;
 use DataBase\Services\ApiToken\get\Interfaces\GetAccessTokenInterface;
+use DataBase\Services\Contact\create\SaveContactService;
 use DataBase\Services\User\get\Interfaces\GetUserInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Mezzio\Router\RouterInterface;
@@ -36,6 +38,7 @@ class SaveApiKeyHandler implements RequestHandlerInterface
     private FilterWithEmailInterface $filterWithEmailService;
     private PrepareForImportInterface $prepareForImportService;
     private ImportContactsInterface $importContactsService;
+    private SaveContactService $saveContactService;
 
     public function __construct(
         GetUserInterface $getUser,
@@ -48,7 +51,8 @@ class SaveApiKeyHandler implements RequestHandlerInterface
         GetAllContactsInterface $getContactsService,
         FilterWithEmailInterface $filterWithEmailService,
         PrepareForImportInterface $prepareForImportService,
-        ImportContactsInterface $importContactsService
+        ImportContactsInterface $importContactsService,
+        SaveContactService $saveContactService
     ) {
         $this->getUser = $getUser;
         $this->saveApiKey = $saveApiKey;
@@ -61,6 +65,7 @@ class SaveApiKeyHandler implements RequestHandlerInterface
         $this->filterWithEmailService = $filterWithEmailService;
         $this->prepareForImportService = $prepareForImportService;
         $this->importContactsService = $importContactsService;
+        $this->saveContactService = $saveContactService;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -120,9 +125,19 @@ class SaveApiKeyHandler implements RequestHandlerInterface
             ->prepare($contactsCollectionWithEmail);
 
         $this->importContactsService
-            ->importContacts($preparedContacts, $unisenderApi);
+            ->importContacts($preparedContacts['unis'], $unisenderApi);
 
-
+        //сохранение в БД данных контакта
+        foreach ($preparedContacts['bd'] as $item) {
+            $contactId = $item['contact_id'];
+            $emailsData = $item['emails'];
+            /** @var Contact $contact */
+            $contact = $this->saveContactService->save(
+                $contactId,
+                $user->id,
+            );
+            $contact->emails()->createMany($emailsData);
+        }
 
         $domain = getenv('SERVICE_DOMAIN');
         $route = $this->router

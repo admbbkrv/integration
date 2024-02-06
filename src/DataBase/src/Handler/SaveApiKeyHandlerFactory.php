@@ -10,6 +10,7 @@ use AmoApiClient\Services\ContactServices\Interfaces\FilterWithEmailInterface;
 use AmoApiClient\Services\ContactServices\Interfaces\GetAllContactsInterface;
 use DataBase\Services\ApiToken\create\Interfaces\SaveApiKeyInterface;
 use DataBase\Services\ApiToken\get\Interfaces\GetAccessTokenInterface;
+use DataBase\Services\Contact\create\SaveContactService;
 use DataBase\Services\User\get\Interfaces\GetUserInterface;
 use Mezzio\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
@@ -35,7 +36,8 @@ class SaveApiKeyHandlerFactory
             $container->get(GetAllContactsInterface::class),
             $container->get(FilterWithEmailInterface::class),
             $container->get(PrepareForImportInterface::class),
-            $container->get(ImportContactsInterface::class)
+            $container->get(ImportContactsInterface::class),
+            $container->get(SaveContactService::class)
         );
     }
 }
