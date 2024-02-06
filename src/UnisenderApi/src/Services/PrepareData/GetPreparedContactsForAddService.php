@@ -4,25 +4,24 @@ declare(strict_types=1);
 
 namespace UnisenderApi\Services\PrepareData;
 
-use UnisenderApi\Services\PrepareData\Interfaces\GetPreparedContactsForImportInterface;
+use UnisenderApi\Services\PrepareData\Interfaces\GetPreparedContactsInterface;
 
 /**
 * Интерфейс для обработки данныз контактов
 * для импорта в Unis
 */
-class GetPreparedContactsForImportService implements
-    GetPreparedContactsForImportInterface
+class GetPreparedContactsForAddService implements
+    GetPreparedContactsInterface
 {
     /**
      * @inheritDoc
      */
-    public function prepare(array $contactData): array
+    public function prepare(array $data): ?array
     {
         $dataForUnis = [];
         $dataForBd = [];
-        $name = $contactData['name'];
-        $contactId = $contactData['id'];
-        foreach ($contactData['custom_fields'] as $custom_field) {
+        $contactId = $data['id'];
+        foreach ($data['custom_fields'] as $custom_field) {
             if ($custom_field['code'] === 'EMAIL') {
                 foreach ($custom_field['values'] as $value) {
                     $dataForUnis[] = [
