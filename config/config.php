@@ -14,6 +14,7 @@ $cacheConfig = [
 ];
 
 $aggregator = new ConfigAggregator([
+    \Beanstalkd\ConfigProvider::class,
     DataBase\ConfigProvider::class,
     \UnisenderApi\ConfigProvider::class,
     \AmoApiClient\ConfigProvider::class,
