@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DataBase\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Модель таблицы contact
@@ -19,6 +19,7 @@ class Contact extends Model
      */
     protected $fillable = [
         'contact_id',
+        'user_id',
     ];
 
     /**
@@ -26,6 +27,19 @@ class Contact extends Model
      * @var string
      */
     protected $table = 'contacts';
+
+    /**
+     * Get the user that owns the contact.
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(
+            User::class,
+            'user_id',
+            'id'
+        );
+    }
 
     /**
      * Get the email associated with the contact.
