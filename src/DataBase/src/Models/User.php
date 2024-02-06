@@ -6,6 +6,7 @@ namespace DataBase\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -35,6 +36,19 @@ class User extends Model
     {
         return $this->hasOne(
             ApiToken::class,
+            'user_id',
+            'id'
+        );
+    }
+
+    /**
+     * Get the contact associated with the user.
+     * @return HasMany
+     */
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(
+            Contact::class,
             'user_id',
             'id'
         );

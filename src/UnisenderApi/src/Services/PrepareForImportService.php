@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace UnisenderApi\Services;
 
 use AmoCRM\Collections\ContactsCollection;
+use AmoCRM\Models\ContactModel;
 
 /**
  * Сервис для подготовки данных контактов для импорта в Unisender
@@ -16,26 +17,38 @@ class PrepareForImportService implements PrepareForImportInterface
      */
     public function prepare(ContactsCollection $contactsCollection): array
     {
-        $data = [];
+        $dataForUnis = [];
+        $dataForBd = [];
         foreach ($contactsCollection as $contactModel) {
-            $name = $contactModel->getName();
+            /** @var ContactModel $contactModel */
             $emails = $contactModel->getCustomFieldsValues()
                 ->getBy('fieldCode', 'EMAIL')->getValues();
 
+            $contactId = $contactModel->getId();
+
+            $dataForBd[$contactId] = [
+                'contact_id' => $contactId,
+            ];
+
             foreach ($emails as $email) {
-                $data[] = [
+                $dataForUnis[] = [
                     $email->getValue(),
-                    $name,
+                ];
+
+                $dataForBd[$contactId]['emails']= [
+                    ['email' => $email->getValue()],
                 ];
             }
         }
 
         $preparedContacts = [
-            'field_names' => [
-                'email',
-                'Name',
+            'unis' => [
+                'field_names' => [
+                    'email',
+                ],
+                'data' => $dataForUnis,
             ],
-            'data' => $data,
+            'bd' => $dataForBd
         ];
 
         return $preparedContacts;

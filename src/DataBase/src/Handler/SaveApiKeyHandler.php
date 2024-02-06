@@ -4,12 +4,23 @@ declare(strict_types=1);
 
 namespace DataBase\Handler;
 
+use AmoApiClient\Services\AmoClient\Interfaces\GetAmoCRMApiClientInterface;
+use AmoApiClient\Services\AmoClient\Webhooks\Interfaces\GenerateWebhookModelInterface;
+use AmoApiClient\Services\ContactServices\Interfaces\FilterWithEmailInterface;
+use AmoApiClient\Services\ContactServices\Interfaces\GetAllContactsInterface;
+use DataBase\Models\Contact;
 use DataBase\Services\ApiToken\create\Interfaces\SaveApiKeyInterface;
+use DataBase\Services\ApiToken\get\Interfaces\GetAccessTokenInterface;
+use DataBase\Services\Contact\create\SaveContactService;
 use DataBase\Services\User\get\Interfaces\GetUserInterface;
 use Laminas\Diactoros\Response\JsonResponse;
+use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use UnisenderApi\Services\ImportContactsInterface;
+use UnisenderApi\Services\PrepareForImportInterface;
+use UnisenderApi\Services\UnisenderApi\Interfaces\GetUnisenderApiInterface;
 
 /**
  * Обработчик запросов сохранения api key
@@ -18,13 +29,43 @@ class SaveApiKeyHandler implements RequestHandlerInterface
 {
     private GetUserInterface $getUser;
     private SaveApiKeyInterface $saveApiKey;
+    private GetAmoCRMApiClientInterface $getAmoClient;
+    private RouterInterface $router;
+    private GenerateWebhookModelInterface $webhookModel;
+    private GetAccessTokenInterface $getAccessToken;
+    private GetUnisenderApiInterface $getUnisenderApi;
+    private GetAllContactsInterface $getContactsService;
+    private FilterWithEmailInterface $filterWithEmailService;
+    private PrepareForImportInterface $prepareForImportService;
+    private ImportContactsInterface $importContactsService;
+    private SaveContactService $saveContactService;
 
     public function __construct(
         GetUserInterface $getUser,
-        SaveApiKeyInterface $saveApiKey
+        SaveApiKeyInterface $saveApiKey,
+        GetAmoCRMApiClientInterface $getAmoClient,
+        RouterInterface $router,
+        GenerateWebhookModelInterface $webhookModel,
+        GetAccessTokenInterface $getAccessToken,
+        GetUnisenderApiInterface $getUnisenderApi,
+        GetAllContactsInterface $getContactsService,
+        FilterWithEmailInterface $filterWithEmailService,
+        PrepareForImportInterface $prepareForImportService,
+        ImportContactsInterface $importContactsService,
+        SaveContactService $saveContactService
     ) {
         $this->getUser = $getUser;
         $this->saveApiKey = $saveApiKey;
+        $this->getAmoClient = $getAmoClient;
+        $this->router = $router;
+        $this->webhookModel = $webhookModel;
+        $this->getAccessToken = $getAccessToken;
+        $this->getUnisenderApi = $getUnisenderApi;
+        $this->getContactsService = $getContactsService;
+        $this->filterWithEmailService = $filterWithEmailService;
+        $this->prepareForImportService = $prepareForImportService;
+        $this->importContactsService = $importContactsService;
+        $this->saveContactService = $saveContactService;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -61,11 +102,69 @@ class SaveApiKeyHandler implements RequestHandlerInterface
             $user->id
         );
 
+        $unisenderApi = $this->getUnisenderApi->get($postParams['api_key']);
+
+        $integrationId = $user->integrations()->first()->id;
+        $apiToken = $user->apiToken()->first();
+        $accessToken = $this->getAccessToken
+            ->getAccessToken($apiToken->base_domain);
+
+        $apiClient = $this->getAmoClient->getAmoClient($integrationId);
+
+        $apiClient->setAccessToken($accessToken)
+            ->setAccountBaseDomain($apiToken->base_domain);
+
+        //Первичная синхронизация
+        $contactsCollection = $this->getContactsService
+            ->getContacts($apiClient);
+
+        $contactsCollectionWithEmail = $this->filterWithEmailService
+            ->filterWithEmail($contactsCollection);
+
+        $preparedContacts = $this->prepareForImportService
+            ->prepare($contactsCollectionWithEmail);
+
+        $this->importContactsService
+            ->importContacts($preparedContacts['unis'], $unisenderApi);
+
+        //сохранение в БД данных контакта
+        foreach ($preparedContacts['bd'] as $item) {
+            $contactId = $item['contact_id'];
+            $emailsData = $item['emails'];
+            /** @var Contact $contact */
+            $contact = $this->saveContactService->save(
+                $contactId,
+                $user->id,
+            );
+            $contact->emails()->createMany($emailsData);
+        }
+
+        $domain = getenv('SERVICE_DOMAIN');
+        $route = $this->router
+            ->generateUri('api.amo.contacts.unis.webhook');
+        $params = '?integration_id=' . $integrationId;
+        $destination = $domain . $route . $params;
+
+        $settings = [
+            'add_contact',
+            'update_contact',
+            'delete_contact',
+        ];
+
+        $webhookModel = $this->webhookModel->generate($settings, $destination);
+
+        $webhookResponse = $apiClient->webhooks()
+            ->subscribe($webhookModel)->toArray();
+
         $response = [
             'successfully_created' => [
                 [
                     'created' => 'api_key',
                     'account_id' => $postParams['account_id']
+                ],
+                [
+                    'created' => 'webhook',
+                    'id' => $webhookResponse['id']
                 ]
             ]
         ];

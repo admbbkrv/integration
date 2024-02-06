@@ -12,8 +12,13 @@ use UnisenderApi\Services\GetContactInterface;
 use UnisenderApi\Services\GetContactService;
 use UnisenderApi\Services\ImportContactsInterface;
 use UnisenderApi\Services\ImportContactsService;
+use UnisenderApi\Services\PrepareData\GetPreparedContactsForDeleteService;
+use UnisenderApi\Services\PrepareData\GetPreparedContactsForAddService;
+use UnisenderApi\Services\PrepareData\GetPreparedContactsForUpdateService;
 use UnisenderApi\Services\PrepareForImportInterface;
 use UnisenderApi\Services\PrepareForImportService;
+use UnisenderApi\Services\UnisenderApi\GetUnisenderApiService;
+use UnisenderApi\Services\UnisenderApi\Interfaces\GetUnisenderApiInterface;
 
 /**
  * The configuration provider for the UnisenderApi module
@@ -46,6 +51,10 @@ class ConfigProvider
                 GetContactInterface::class => GetContactService::class,
                 PrepareForImportInterface::class => PrepareForImportService::class,
                 ImportContactsInterface::class => ImportContactsService::class,
+                GetPreparedContactsForAddService::class => GetPreparedContactsForAddService::class,
+                GetUnisenderApiInterface::class => GetUnisenderApiService::class,
+                GetPreparedContactsForDeleteService::class => GetPreparedContactsForDeleteService::class,
+                GetPreparedContactsForUpdateService::class => GetPreparedContactsForUpdateService::class,
             ],
             'factories'  => [
                 GetContactUnisApiHandler::class => GetContactUnisApiHandlerFactory::class,

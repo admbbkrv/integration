@@ -82,6 +82,12 @@ return static function (
         'amo.unis.contacts.import'
     );
 
+    $app->post(
+        '/api/amo/contacts/unis/webhook',
+        \AmoApiClient\Handler\UnisWebhookHandler::class,
+        'api.amo.contacts.unis.webhook'
+    );
+
     //Пути для работы API Unisender
     $app->get(
         '/unis/contact',

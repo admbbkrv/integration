@@ -25,6 +25,10 @@ use DataBase\Services\ApiToken\get\GetApiTokenService;
 use DataBase\Services\ApiToken\get\Interfaces\GetAccessTokenInterface;
 use DataBase\Services\ApiToken\get\Interfaces\GetApiTokenInterface;
 use DataBase\Services\ConnectToMysqlDBService;
+use DataBase\Services\Contact\create\Interfaces\SaveContactInterface;
+use DataBase\Services\Contact\create\SaveContactService;
+use DataBase\Services\Email\create\Interfaces\SaveEmailInterface;
+use DataBase\Services\Email\create\SaveEmailService;
 use DataBase\Services\Integration\Create\Interfaces\SaveIntegrationInterface;
 use DataBase\Services\Integration\Create\SaveIntegrationService;
 use DataBase\Services\Integration\Get\GetIntegrationService;
@@ -76,6 +80,10 @@ class ConfigProvider
                 SaveApiKeyInterface::class => SaveApiKeyService::class,
                 GetApiTokenInterface::class => GetApiTokenService::class,
                 GetAccessTokenInterface::class => GetAccessTokenService::class,
+                //Contact
+                SaveContactInterface::class => SaveContactService::class,
+                //Email
+                SaveEmailInterface::class => SaveEmailService::class,
             ),
             'factories'  => [
                 DoConnectToDBMiddleware::class => DoConnectToDBMiddlewareFactory::class,

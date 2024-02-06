@@ -13,6 +13,7 @@ declare(strict_types=1);
 return [
     'dependencies' => [
         'factories' => [
+            AmoApiClient\Handler\UnisWebhookHandler::class => AmoApiClient\Handler\UnisWebhookHandlerFactory::class,
         ],
     ],
 ];
