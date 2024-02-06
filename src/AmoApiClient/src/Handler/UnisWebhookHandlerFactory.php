@@ -6,10 +6,11 @@ namespace AmoApiClient\Handler;
 
 use DataBase\Services\ApiToken\get\GetApiTokenService;
 use DataBase\Services\Contact\create\Interfaces\SaveContactInterface;
+use DataBase\Services\User\get\Interfaces\GetUserInterface;
 use Psr\Container\ContainerInterface;
-use UnisenderApi\Services\PrepareData\Interfaces\GetPreparedContactsForDeleteInterface;
-use UnisenderApi\Services\PrepareData\Interfaces\GetPreparedContactsForImportInterface;
-use UnisenderApi\Services\PrepareData\Interfaces\GetPreparedContactsForUpdateInterface;
+use UnisenderApi\Services\PrepareData\GetPreparedContactsForAddService;
+use UnisenderApi\Services\PrepareData\GetPreparedContactsForDeleteService;
+use UnisenderApi\Services\PrepareData\GetPreparedContactsForUpdateService;
 use UnisenderApi\Services\UnisenderApi\Interfaces\GetUnisenderApiInterface;
 
 /**
@@ -20,12 +21,13 @@ class UnisWebhookHandlerFactory
     public function __invoke(ContainerInterface $container) : UnisWebhookHandler
     {
         return new UnisWebhookHandler(
-            $container->get(GetPreparedContactsForImportInterface::class),
-            $container->get(GetPreparedContactsForDeleteInterface::class),
-            $container->get(GetPreparedContactsForUpdateInterface::class),
+            $container->get(GetPreparedContactsForAddService::class),
+            $container->get(GetPreparedContactsForDeleteService::class),
+            $container->get(GetPreparedContactsForUpdateService::class),
             $container->get(GetApiTokenService::class),
             $container->get(GetUnisenderApiInterface::class),
-            $container->get(SaveContactInterface::class)
+            $container->get(SaveContactInterface::class),
+            $container->get(GetUserInterface::class)
         );
     }
 }
