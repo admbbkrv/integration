@@ -6,7 +6,11 @@ namespace Beanstalkd;
 
 use Beanstalkd\Commands\HowTimeCommand;
 use Beanstalkd\Commands\Workers\TimeWorker;
+use Beanstalkd\Commands\Workers\WebhookWorker;
+use Beanstalkd\config\BeanstalkConfig;
 use Beanstalkd\Producers\TimeProducer;
+use Beanstalkd\Producers\WebhookProducer;
+use Psr\Container\ContainerInterface;
 
 /**
  * The configuration provider for the Beanstalkd module
@@ -39,6 +43,7 @@ class ConfigProvider
             'commands' => [
                 'how-time' => HowTimeCommand::class,
                 'times:worker' => TimeWorker::class,
+                'webhooks:worker' => WebhookWorker::class,
             ],
         ];
     }
@@ -57,6 +62,15 @@ class ConfigProvider
                 TimeWorker::class => TimeWorker::class,
             ],
             'factories'  => [
+                BeanstalkConfig::class => function (ContainerInterface $container) {
+                    return new BeanstalkConfig($container);
+                },
+                WebhookWorker::class => function (ContainerInterface $container) {
+                    return WebhookWorker::getObject($container);
+                },
+                WebhookProducer::class => function (ContainerInterface $container) {
+                    return new WebhookProducer($container->get(BeanstalkConfig::class));
+                },
             ],
         ];
     }
