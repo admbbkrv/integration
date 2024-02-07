@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Beanstalkd;
 
 use Beanstalkd\Commands\HowTimeCommand;
+use Beanstalkd\Commands\Workers\TimeWorker;
+use Beanstalkd\Producers\TimeProducer;
 
 /**
  * The configuration provider for the Beanstalkd module
@@ -36,6 +38,7 @@ class ConfigProvider
         return [
             'commands' => [
                 'how-time' => HowTimeCommand::class,
+                'times:worker' => TimeWorker::class,
             ],
         ];
     }
@@ -47,7 +50,11 @@ class ConfigProvider
     {
         return [
             'invokables' => [
+                //Producers
+                TimeProducer::class => TimeProducer::class,
+                //Commands->Workers
                 HowTimeCommand::class => HowTimeCommand::class,
+                TimeWorker::class => TimeWorker::class,
             ],
             'factories'  => [
             ],
