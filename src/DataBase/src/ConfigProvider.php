@@ -22,8 +22,10 @@ use DataBase\Services\ApiToken\create\SaveApiKeyService;
 use DataBase\Services\ApiToken\create\SaveApiTokenService;
 use DataBase\Services\ApiToken\get\GetAccessTokenService;
 use DataBase\Services\ApiToken\get\GetApiTokenService;
+use DataBase\Services\ApiToken\get\GetExpireSoonTokensService;
 use DataBase\Services\ApiToken\get\Interfaces\GetAccessTokenInterface;
 use DataBase\Services\ApiToken\get\Interfaces\GetApiTokenInterface;
+use DataBase\Services\ApiToken\get\Interfaces\GetExpireSoonTokensInterface;
 use DataBase\Services\ConnectToMysqlDBService;
 use DataBase\Services\Contact\create\Interfaces\SaveContactInterface;
 use DataBase\Services\Contact\create\SaveContactService;
@@ -80,6 +82,7 @@ class ConfigProvider
                 SaveApiKeyInterface::class => SaveApiKeyService::class,
                 GetApiTokenInterface::class => GetApiTokenService::class,
                 GetAccessTokenInterface::class => GetAccessTokenService::class,
+                GetExpireSoonTokensInterface::class => GetExpireSoonTokensService::class,
                 //Contact
                 SaveContactInterface::class => SaveContactService::class,
                 //Email

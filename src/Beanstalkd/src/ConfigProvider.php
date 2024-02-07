@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Beanstalkd;
 
+use AmoApiClient\Commands\Workers\TokensRefreshWorker;
 use Beanstalkd\Commands\HowTimeCommand;
 use Beanstalkd\Commands\Workers\TimeWorker;
 use Beanstalkd\Commands\Workers\WebhookWorker;
 use Beanstalkd\config\BeanstalkConfig;
 use Beanstalkd\Producers\TimeProducer;
+use Beanstalkd\Producers\TokensProducer;
 use Beanstalkd\Producers\WebhookProducer;
 use Psr\Container\ContainerInterface;
 
@@ -44,6 +46,7 @@ class ConfigProvider
                 'how-time' => HowTimeCommand::class,
                 'times:worker' => TimeWorker::class,
                 'webhooks:worker' => WebhookWorker::class,
+                'tokens:worker' => TokensRefreshWorker::class,
             ],
         ];
     }
@@ -65,11 +68,19 @@ class ConfigProvider
                 BeanstalkConfig::class => function (ContainerInterface $container) {
                     return new BeanstalkConfig($container);
                 },
+                //Workers
                 WebhookWorker::class => function (ContainerInterface $container) {
                     return WebhookWorker::getObject($container);
                 },
+                TokensRefreshWorker::class => function (ContainerInterface $container) {
+                    return TokensRefreshWorker::getObject($container);
+                },
+                //Producers
                 WebhookProducer::class => function (ContainerInterface $container) {
                     return new WebhookProducer($container->get(BeanstalkConfig::class));
+                },
+                TokensProducer::class => function (ContainerInterface $container) {
+                    return new TokensProducer($container->get(BeanstalkConfig::class));
                 },
             ],
         ];
