@@ -29,10 +29,6 @@ class WebhookWorker extends BaseWorker
     private ConnectToDBInterface $connectToDB;
     private array $dbConfig;
 
-
-
-
-
     /**
      * @inheritDoc
      */

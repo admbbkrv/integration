@@ -1,0 +1,1 @@
+ 0 22 * * * /home/admbbkrv/www/gr1application/vendor/bin/laminas tokens:expire-soon
